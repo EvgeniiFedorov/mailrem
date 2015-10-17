@@ -12,6 +12,16 @@
 bin/
 gen/
 
+# IntelliJ files
+.idea
+*.iml
+
+# backup files
+*.bak
+
+# Windows files
+Thumbs.db
+
 # Gradle files
 .gradle/
 build/
