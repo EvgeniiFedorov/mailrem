@@ -17,7 +17,7 @@ public class UpdateData extends BroadcastReceiver {
     private final static String COUNT = "Count";
     private final static String COUNT_DEFAULT_VALUE = "0";
     private final static int SPACED_REPETITION = 3 * 1000;
-    private final static int COUNT_REPEAT = 10;
+    private final static int COUNT_REPEAT = 3;
     private final static int ID_NOTIFICATION = 1;
 
     @Override
