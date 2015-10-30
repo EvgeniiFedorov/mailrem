@@ -9,7 +9,10 @@ import java.util.Date;
 public class MessageAnalyzer {
 
     private final static String LOG_TAG = "log_debug";
+    private final static String ERROR_STRING = "error in read message";
+
     private Message message;
+
 
     public MessageAnalyzer(Message message) throws NullPointerException {
         reset(message);
@@ -27,13 +30,13 @@ public class MessageAnalyzer {
             return message.getSubject();
         } catch (MessagingException e) {
             Log.e(LOG_TAG, e.getMessage());
+            return ERROR_STRING;
         }
-        return "";
     }
 
     public String getText() throws MessagingException, IOException {
         if (message.isMimeType("text/*")) {
-            return (String)message.getContent();
+            return (String) message.getContent();
         }
 
         if (message.isMimeType("multipart/*")) {

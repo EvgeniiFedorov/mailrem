@@ -12,10 +12,10 @@ public class AutoStart extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(LOG_TAG, "auto start br");
+        Log.d(LOG_TAG, "auto start");
 
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            new UpdateData().sendNotification(context, "Auto start", ID_NOTIFICATION);
+            Notifications.sendNotification(context, "Auto start", ID_NOTIFICATION);
         }
     }
 }

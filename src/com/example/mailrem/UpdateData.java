@@ -1,8 +1,6 @@
 package com.example.mailrem;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,7 +24,7 @@ public class UpdateData extends BroadcastReceiver {
 
         int count = getCountFromSettings(context);
 
-        sendNotification(context, Integer.toString(count), ID_NOTIFICATION);
+        Notifications.sendNotification(context, Integer.toString(count), ID_NOTIFICATION);
 
         if (count < COUNT_REPEAT) {
             setAlarmManager(context);
@@ -59,37 +57,5 @@ public class UpdateData extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 intentToBR, PendingIntent.FLAG_CANCEL_CURRENT);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + SPACED_REPETITION, pendingIntent);
-    }
-
-    public void sendNotification(Context context, String message, int idNotification) {
-        Log.d(LOG_TAG, "send notification");
-        Intent intentToActivity = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentToActivity,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        long[] vibration = new long[10];
-        for (int i = 0; i < 10; ++i) {
-            vibration[i] = (12 - i) * 10;
-        }
-
-        Notification notification = new Notification.Builder(context)
-                .addAction(R.drawable.ic_launcher, "1", pendingIntent)
-                .addAction(R.drawable.ic_launcher, "2", pendingIntent)
-                .addAction(R.drawable.ic_launcher, "3", pendingIntent)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setTicker("Ticker")
-                .setContentTitle("Content title")
-                .setContentText(message)
-                .setContentInfo("Content info")
-                .setSubText("Sub text")
-                .setAutoCancel(true)
-                .setVibrate(vibration)
-                .build();
-
-        notificationManager.notify(idNotification, notification);
     }
 }

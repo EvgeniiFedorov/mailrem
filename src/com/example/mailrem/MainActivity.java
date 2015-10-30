@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
     public void onClickButtonNotification(View v) {
         Log.d(LOG_TAG, "button send notification click");
 
-        new UpdateData().sendNotification(this, "Send from activity", ID_NOTIFICATION);
+        Notifications.sendNotification(this, "Send from activity", ID_NOTIFICATION);
     }
 
     public void onClickButtonMail(View v) {
@@ -52,21 +52,15 @@ public class MainActivity extends Activity {
         try {
             MailAgent mailAgent = new MailAgent();
             mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
-            Message[] messages = mailAgent.getUnreadMessages("INBOX");
-            mailAgent.disconnect();
+            mailAgent.openFolder("INBOX");
+
+            Message[] messages = mailAgent.getUnreadMessages();
             Message message = messages[0];
-            Log.d(LOG_TAG, "1");
-            //String encoding = message.getEncoding();
-            //String text = message.getSubject();
-            Log.d(LOG_TAG, "2");
-            if (message == null) {
-                Log.d(LOG_TAG, "null");
-            } else {
-                Log.d(LOG_TAG, message.getSubject());
-            }
-            Log.d(LOG_TAG, "3");
-            //MessageAnalyzer messageAnalyzer = new MessageAnalyzer(messages[0]);
-            //textView.setText(messageAnalyzer.getSubject());
+
+            textView.setText(message.getSubject());
+
+            mailAgent.closeFolder();
+            mailAgent.disconnect();
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         }
