@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">mailrem</string>
+    <string name="start_string">Start, MainActivity</string>
+    <string name="buttonStart_string">Start service</string>
+    <string name="buttonStop_string">Stop service</string>
+    <string name="buttonNotification_string">Send notification</string>
+    <string name="buttonMail_string">Get message</string>
+</resources>
