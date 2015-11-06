@@ -44,7 +44,8 @@ public class MainActivity extends Activity {
     public void onClickButtonNotification(View v) {
         Log.d(LOG_TAG, "button send notification click");
 
-        Notifications.sendNotification(this, "Send from activity", ID_NOTIFICATION);
+        new Notifications(this)
+                .sendNotification("Send from activity", ID_NOTIFICATION);
     }
 
     public void onClickButtonMail(View v) {

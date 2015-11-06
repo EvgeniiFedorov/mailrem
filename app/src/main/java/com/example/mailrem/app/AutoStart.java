@@ -15,7 +15,8 @@ public class AutoStart extends BroadcastReceiver {
         Log.d(LOG_TAG, "auto start");
 
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Notifications.sendNotification(context, "Auto start", ID_NOTIFICATION);
+            new Notifications(context)
+                    .sendNotification("Auto start", ID_NOTIFICATION);
         }
     }
 }

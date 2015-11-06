@@ -6,26 +6,14 @@ import javax.mail.*;
 import java.io.IOException;
 import java.util.Date;
 
-public class MessageAnalyzer {
+public final class MessageAnalyzer {
 
     private final static String LOG_TAG = "log_debug";
     private final static String ERROR_STRING = "error in read message";
 
-    private Message message;
+    private MessageAnalyzer() {}
 
-
-    public MessageAnalyzer(Message message) throws NullPointerException {
-        reset(message);
-    }
-
-    public void reset(Message message) throws NullPointerException {
-        if (message == null) {
-            throw new NullPointerException("message is null");
-        }
-        this.message = message;
-    }
-
-    public String getSubject() {
+    public static String getSubject(Message message) {
         try {
             return message.getSubject();
         } catch (MessagingException e) {
@@ -34,7 +22,7 @@ public class MessageAnalyzer {
         }
     }
 
-    public String getText() throws MessagingException, IOException {
+    public static String getText(Message message) throws MessagingException, IOException {
         if (message.isMimeType("text/*")) {
             return (String) message.getContent();
         }
@@ -51,19 +39,25 @@ public class MessageAnalyzer {
         return "";
     }
 
-    public Date getDate() throws MessagingException {
+    public static Date getDate(Message message) throws MessagingException {
         return message.getSentDate();
     }
 
-    public String getFrom() throws MessagingException {
-        Address[] addresses = message.getFrom();
-        if (addresses == null || addresses.length != 0) {
-            return null;
+    public static String getFrom(Message message) {
+        try {
+            Address[] addresses = message.getFrom();
+            if (addresses == null || addresses.length != 0) {
+                Log.i(LOG_TAG, "No field from");
+                return ERROR_STRING;
+            }
+            return addresses[0].toString();
+        } catch (MessagingException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            return ERROR_STRING;
         }
-        return message.getFrom()[0].toString();
     }
 
-    public boolean isAnswered()throws MessagingException{
+    public static boolean isAnswered(Message message) throws MessagingException{
         return message.isSet(Flags.Flag.ANSWERED);
     }
 }

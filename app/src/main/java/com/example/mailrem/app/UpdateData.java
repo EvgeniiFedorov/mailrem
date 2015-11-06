@@ -24,7 +24,7 @@ public class UpdateData extends BroadcastReceiver {
 
         int count = getCountFromSettings(context);
 
-        Notifications.sendNotification(context, Integer.toString(count), ID_NOTIFICATION);
+        new Notifications(context).sendNotification(Integer.toString(count), ID_NOTIFICATION);
 
         if (count < COUNT_REPEAT) {
             setAlarmManager(context);

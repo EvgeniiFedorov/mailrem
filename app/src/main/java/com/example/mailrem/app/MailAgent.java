@@ -27,6 +27,10 @@ public class MailAgent {
                         String userPassword) throws MessagingException, IOException {
         Log.d(LOG_TAG, "mail connect ...");
 
+        if (store != null) {
+            throw new MessagingException("Previous connection is not closed");
+        }
+
         Properties properties = System.getProperties();
         properties.put("mail.store.protocol", MAIL_STORE_PROTOCOL);
 
@@ -40,21 +44,34 @@ public class MailAgent {
 
     public void disconnect() throws MessagingException {
         Log.d(LOG_TAG, "mail disconnect");
+        if (store == null) {
+            throw new MessagingException("Connection is not established");
+        }
+
+        if (folder != null) {
+            throw new MessagingException("Not all folder are closed");
+        }
+
         store.close();
+        store = null;
     }
 
     public void openFolder(String name) throws MessagingException {
         Log.d(LOG_TAG, "mail openFolder " + name);
         if (folder != null) {
-            Log.d(LOG_TAG, "mail openFolder fail");
-            throw new MessagingException("one folder is now open");
+            throw new MessagingException("One folder is now open");
         }
+
         folder = store.getFolder(name);
         folder.open(Folder.READ_ONLY);
     }
 
     public void closeFolder() throws MessagingException {
         Log.d(LOG_TAG, "mail closeFolder");
+        if (folder == null) {
+            throw new MessagingException("Folder already closed");
+        }
+
         folder.close(false);
         folder = null;
     }
