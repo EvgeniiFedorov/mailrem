@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class DataBase extends SQLiteOpenHelper {
 
+    private final static String LOG_TAG = "log_debug";
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MailBase";
     private static final String TABLE_MAILS = "Mails";
@@ -27,6 +29,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d(LOG_TAG, "create db");
         String createTable = "CREATE TABLE " + TABLE_MAILS + "(" +
                 //COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COLUMN_FROM + " TEXT," +
@@ -38,12 +41,14 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(LOG_TAG, "update db");
         String deleteTable = "DROP TABLE IF EXISTS " + TABLE_MAILS;
         db.execSQL(deleteTable);
         onCreate(db);
     }
 
     public void addMessage(MessageWrap message) {
+        Log.d(LOG_TAG, "add message in db");
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -55,6 +60,7 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     public MessageWrap getMessage(int id) {
+        Log.d(LOG_TAG, "get message from db");
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_MAILS, COLUMNS,
@@ -66,12 +72,16 @@ public class DataBase extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         MessageWrap message = new MessageWrap();
-        message.setFrom(cursor.getString(1));
-        message.setSubject(cursor.getString(2));
+        message.setFrom(cursor.getString(0));
+        message.setSubject(cursor.getString(1));
+
+        cursor.close();
+        db.close();
         return message;
     }
 
     public List<MessageWrap> getAllMessages() {
+        Log.d(LOG_TAG, "get all message from db");
         List<MessageWrap> messages = new LinkedList<>();
         String query = "SELECT * FROM " + TABLE_MAILS;
 
@@ -81,12 +91,14 @@ public class DataBase extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 MessageWrap message = new MessageWrap();
-                message.setFrom(cursor.getString(1));
-                message.setSubject(cursor.getString(2));
+                message.setFrom(cursor.getString(0));
+                message.setSubject(cursor.getString(1));
                 messages.add(message);
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+        db.close();
         return messages;
     }
 }

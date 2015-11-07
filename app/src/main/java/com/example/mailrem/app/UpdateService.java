@@ -20,10 +20,13 @@ public class UpdateService extends Service {
     private final static String USER_EMAIL = "ttestname1@mail.ru";
     private final static String USER_PASSWORD = "testpassword";
 
+    private DataBase dataBase;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "create service");
+        dataBase = new DataBase(this);
     }
 
     @Override
@@ -41,17 +44,31 @@ public class UpdateService extends Service {
             mailAgent.openFolder("INBOX");
 
             Message[] messages = mailAgent.getMessagesInPeriod(startDate, endDate);
-            List<String> messageTitles = new LinkedList<>();
+            List<MessageWrap> messagesWrap = new LinkedList<>();
 
             for (Message message : messages) {
                 if (!MessageAnalyzer.isAnswered(message)) {
-                    String title = MessageAnalyzer.getSubject(message);
-                    messageTitles.add(title);
+                    MessageWrap messageWrap = new MessageWrap();
+                    messageWrap.setFrom(MessageAnalyzer.getFrom(message));
+                    messageWrap.setSubject(MessageAnalyzer.getSubject(message));
+                    messagesWrap.add(messageWrap);
                 }
             }
 
             mailAgent.closeFolder();
             mailAgent.disconnect();
+
+            for (MessageWrap messageWrap : messagesWrap) {
+                dataBase.addMessage(messageWrap);
+            }
+
+            List<String> messageTitles = new LinkedList<>();
+            List<MessageWrap> newMessagesWrap = dataBase.getAllMessages();
+            for (MessageWrap messageWrap : newMessagesWrap) {
+                String title = messageWrap.getSubject();
+                messageTitles.add(title);
+            }
+
 
             Notifications notificator = new Notifications(getBaseContext());
             notificator.notifyNewMessage(messageTitles, ID_NOTIFICATION);
