@@ -46,7 +46,7 @@ public final class MessageAnalyzer {
     public static String getFrom(Message message) {
         try {
             Address[] addresses = message.getFrom();
-            if (addresses == null || addresses.length != 0) {
+            if (addresses == null || addresses.length == 0) {
                 Log.i(LOG_TAG, "No field from");
                 return ERROR_STRING;
             }
