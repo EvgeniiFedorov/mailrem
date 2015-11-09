@@ -40,6 +40,6 @@ task appStart(type: Exec, dependsOn: 'installDebug') {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.+'
     compile 'com.sun.mail:javax.mail:1.5.4'
 }
