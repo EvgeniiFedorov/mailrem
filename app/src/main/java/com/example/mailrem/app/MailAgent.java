@@ -76,26 +76,45 @@ public class MailAgent {
         folder = null;
     }
 
-    public Folder[] getFolders() throws MessagingException {
+    private Folder[] getFolders() throws MessagingException {
         return store.getDefaultFolder().list();
     }
 
-    public Message[] getMessagesInPeriod(Date start, Date end) throws MessagingException {
+    public MessageWrap[] getMessagesInPeriod(Date start, Date end)
+            throws MessagingException {
         Log.d(LOG_TAG, "mail getMessagesInPeriod");
 
         SearchTerm laterThen = new ReceivedDateTerm(ComparisonTerm.GT, start);
         SearchTerm earlierThen = new ReceivedDateTerm(ComparisonTerm.LT, end);
         SearchTerm inPeriod = new AndTerm(laterThen, earlierThen);
 
-        return folder.search(inPeriod);
+        Message[] messages = folder.search(inPeriod);
+        return MessageAnalyzer.messageWrapping(messages);
     }
 
-    public Message[] getUnreadMessages() throws MessagingException {
+    public MessageWrap[] getNotAnsweredMessagesInPeriod(Date start, Date end)
+            throws MessagingException {
+        Log.d(LOG_TAG, "mail getNotAnsweredMessagesInPeriod");
+
+        SearchTerm laterThen = new ReceivedDateTerm(ComparisonTerm.GT, start);
+        SearchTerm earlierThen = new ReceivedDateTerm(ComparisonTerm.LT, end);
+        SearchTerm inPeriod = new AndTerm(laterThen, earlierThen);
+
+        SearchTerm answeredTerm = new FlagTerm(new Flags(Flags.Flag.ANSWERED), false);
+        SearchTerm resultTerm = new AndTerm(inPeriod, answeredTerm);
+
+        Message[] messages = folder.search(resultTerm);
+        return MessageAnalyzer.messageWrapping(messages);
+    }
+
+
+    public MessageWrap[] getUnreadMessages() throws MessagingException {
         Log.d(LOG_TAG, "mail getUnreadMessages");
 
         SearchTerm searchTerm = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
 
-        return folder.search(searchTerm);
+        Message[] messages = folder.search(searchTerm);
+        return MessageAnalyzer.messageWrapping(messages);
     }
 
     private void setThreadPolicy() {

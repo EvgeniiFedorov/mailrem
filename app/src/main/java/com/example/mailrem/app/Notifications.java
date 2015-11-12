@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.List;
+
 public class Notifications {
 
     private final static String LOG_TAG = "log_debug";
@@ -18,7 +20,7 @@ public class Notifications {
         this.context = context;
     }
 
-    public void notifyNewMessage(Iterable<String> messageTitles, int idNotification) {
+    public void notifyNewMessage(List<String> messageTitles, int idNotification) {
         Log.d(LOG_TAG, "send notification");
 
         Intent intentToActivity = new Intent(context, MainActivity.class);
@@ -36,13 +38,15 @@ public class Notifications {
         }
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .addAction(0, "Ignore", pendingIntent)
+                .addAction(0, "Later", pendingIntent)
                 .addAction(0, "Answer", pendingIntent)
+                .addAction(0, "Ignore", pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Content title")
+                .setContentTitle(String.valueOf(messageTitles.size()) +
+                        " not answered messages")
                 .setContentText("Content text")
                 .setContentIntent(pendingIntent)
-                .setTicker("New messages")
+                .setTicker("Reminder of the answer")
                 .setStyle(inboxStyle)
                 .setAutoCancel(true)
                 .setVibrate(VIBRATION);

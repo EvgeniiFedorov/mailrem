@@ -7,8 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import javax.mail.Message;
-
 public class MainActivity extends Activity {
 
     private final static String LOG_TAG = "log_debug";
@@ -55,8 +53,8 @@ public class MainActivity extends Activity {
             mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
             mailAgent.openFolder("INBOX");
 
-            Message[] messages = mailAgent.getUnreadMessages();
-            Message message = messages[0];
+            MessageWrap[] messages = mailAgent.getUnreadMessages();
+            MessageWrap message = messages[0];
 
             textView.setText(message.getSubject());
 

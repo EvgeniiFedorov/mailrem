@@ -20,7 +20,7 @@ android {
         exclude 'META-INF/LICENSE.txt'
     }
     defaultConfig {
-        applicationId "com.example.mailremgradle.app"
+        applicationId "com.example.mailrem.app"
         minSdkVersion 18//19
         targetSdkVersion 23
         versionCode 1
@@ -35,7 +35,8 @@ android {
 }
 
 task appStart(type: Exec, dependsOn: 'installDebug') {
-    commandLine 'cmd', '/c', 'adb', 'shell', 'am', 'start', '-n', 'com.example.mailrem.app/.MainActivity'
+    executable = 'adb'
+    args = ['shell', 'am', 'start', '-n', 'com.example.mailrem.app/.MainActivity']
 }
 
 dependencies {

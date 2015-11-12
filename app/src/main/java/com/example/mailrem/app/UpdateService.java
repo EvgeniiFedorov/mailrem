@@ -43,17 +43,8 @@ public class UpdateService extends Service {
             mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
             mailAgent.openFolder("INBOX");
 
-            Message[] messages = mailAgent.getMessagesInPeriod(startDate, endDate);
-            List<MessageWrap> messagesWrap = new LinkedList<>();
-
-            for (Message message : messages) {
-                if (!MessageAnalyzer.isAnswered(message)) {
-                    MessageWrap messageWrap = new MessageWrap();
-                    messageWrap.setFrom(MessageAnalyzer.getFrom(message));
-                    messageWrap.setSubject(MessageAnalyzer.getSubject(message));
-                    messagesWrap.add(messageWrap);
-                }
-            }
+            MessageWrap[] messagesWrap = mailAgent.getNotAnsweredMessagesInPeriod(
+                    startDate, endDate);
 
             mailAgent.closeFolder();
             mailAgent.disconnect();
