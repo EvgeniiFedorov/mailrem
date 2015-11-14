@@ -1,21 +1,24 @@
 package com.example.mailrem.app;
 
 import android.util.Log;
+import com.sun.mail.imap.IMAPFolder;
 
 import javax.mail.*;
-import java.io.IOException;
+
 import java.util.Date;
 
 public final class MessageAnalyzer {
 
-    private final static String LOG_TAG = "log_debug";
+    private final static String LOG_TAG = "mailrem_log";
+
     private final static String ERROR_STRING = "error in read message";
     private final static String TEXT_NOT_FOUND = "text not found";
 
-    public static MessageWrap messageWrapping(Message message) {
-        Log.d(LOG_TAG, "wrapping message");
+    public static MessageWrap messageWrapping(Message message, IMAPFolder folder) {
+        Log.d(LOG_TAG, "wrapping message " + String.valueOf(getUID(message, folder)));
         MessageWrap messageWrap = new MessageWrap();
 
+        messageWrap.setUID(getUID(message, folder));
         messageWrap.setFrom(getFrom(message));
         messageWrap.setTo(getTo(message));
         messageWrap.setDate(getDate(message));
@@ -25,15 +28,25 @@ public final class MessageAnalyzer {
         return messageWrap;
     }
 
-    public static MessageWrap[] messageWrapping(Message[] messages) {
+    public static MessageWrap[] messageWrapping(Message[] messages, IMAPFolder folder) {
         Log.d(LOG_TAG, "wrapping messages");
         MessageWrap[] messageWraps = new MessageWrap[messages.length];
 
         for (int index = 0; index < messages.length; ++index) {
-            messageWraps[index] = messageWrapping(messages[index]);
+            messageWraps[index] = messageWrapping(messages[index], folder);
         }
 
         return messageWraps;
+    }
+
+    private static long getUID(Message message, IMAPFolder folder) {
+        Log.d(LOG_TAG, "message get uid");
+        try {
+            return folder.getUID(message);
+        } catch(MessagingException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            return 0;
+        }
     }
 
     private static String getFrom(Message message) {
@@ -113,7 +126,13 @@ public final class MessageAnalyzer {
         return "text";
     }
 
-    private static boolean isAnswered(Message message) throws MessagingException{
-        return message.isSet(Flags.Flag.ANSWERED);
+    private static boolean isNeedAnswer(Message message) {
+        Log.d(LOG_TAG, "message isNeedAnswer");
+        try {
+            return message.isSet(Flags.Flag.ANSWERED);
+        } catch (MessagingException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            return false;
+        }
     }
 }

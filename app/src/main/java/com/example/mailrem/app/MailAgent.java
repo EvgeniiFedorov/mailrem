@@ -2,6 +2,7 @@ package com.example.mailrem.app;
 
 import android.os.StrictMode;
 import android.util.Log;
+import com.sun.mail.imap.IMAPFolder;
 
 import javax.mail.*;
 import javax.mail.search.*;
@@ -12,19 +13,21 @@ import java.util.Properties;
 
 public class MailAgent {
 
-    private final static String LOG_TAG = "log_debug";
+    private final static String LOG_TAG = "mailrem_log";
+
     private final static String MAIL_STORE_PROTOCOL = "imaps";
 
     private Store store;
-    private Folder folder;
 
     public MailAgent() {
         Log.d(LOG_TAG, "mail constructor");
         setThreadPolicy();
     }
 
-    public void connect(String mailHost, int serverPort, String userMail,
-                        String userPassword) throws MessagingException, IOException {
+    public void connect(String mailHost, int serverPort,
+                        String userMail, String userPassword)
+            throws MessagingException, IOException {
+
         Log.d(LOG_TAG, "mail connect ...");
 
         if (store != null) {
@@ -48,73 +51,164 @@ public class MailAgent {
             throw new MessagingException("Connection is not established");
         }
 
-        if (folder != null) {
-            throw new MessagingException("Not all folder are closed");
-        }
-
         store.close();
         store = null;
     }
 
-    public void openFolder(String name) throws MessagingException {
-        Log.d(LOG_TAG, "mail openFolder " + name);
-        if (folder != null) {
-            throw new MessagingException("One folder is now open");
-        }
-
-        folder = store.getFolder(name);
-        folder.open(Folder.READ_ONLY);
-    }
-
-    public void closeFolder() throws MessagingException {
-        Log.d(LOG_TAG, "mail closeFolder");
-        if (folder == null) {
-            throw new MessagingException("Folder already closed");
-        }
-
-        folder.close(false);
-        folder = null;
-    }
-
-    private Folder[] getFolders() throws MessagingException {
+    public Folder[] getFolders() throws MessagingException {
+        Log.d(LOG_TAG, "mail getFolders");
         return store.getDefaultFolder().list();
     }
 
-    public MessageWrap[] getMessagesInPeriod(Date start, Date end)
+    public MessageWrap[] getMessagesSinceUID(long uid, Folder folder)
             throws MessagingException {
-        Log.d(LOG_TAG, "mail getMessagesInPeriod");
+
+        Log.d(LOG_TAG, "mail getMessagesSinceUID from folder " + String.valueOf(uid));
+        openFolder(folder);
+
+        IMAPFolder imapFolder = (IMAPFolder) folder;
+        Message[] messages = imapFolder.getMessagesByUID(uid, UIDFolder.LASTUID);
+        Log.d(LOG_TAG, String.valueOf(messages.length));
+
+        MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
+                imapFolder);
+
+        Log.d(LOG_TAG, String.valueOf(messageWraps[0].getUID()));
+
+        closeFolder(folder);
+        return messageWraps;
+    }
+
+    public MessageWrap[] getMessagesSinceUID(long uid, String nameFolder)
+            throws MessagingException {
+
+        Log.d(LOG_TAG, "mail getMessagesSinceUID by name");
+        Folder folder = getFolder(nameFolder);
+
+        return getMessagesSinceUID(uid, folder);
+    }
+
+    public long[] getUIDForAnsweredMessages(Folder folder)
+            throws MessagingException {
+        openFolder(folder);
+
+        Flags flags = new Flags(Flags.Flag.ANSWERED);
+        SearchTerm searchTerm = new FlagTerm(flags, false);
+
+        Message[] messages = folder.search(searchTerm);
+
+        MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
+                (IMAPFolder) folder);
+
+        closeFolder(folder);
+        return null;
+    }
+
+    public MessageWrap[] getMessagesInPeriod(Date start, Date end,
+                                             Folder folder)
+            throws MessagingException {
+
+        Log.d(LOG_TAG, "mail getMessagesInPeriod from folder");
+        openFolder(folder);
 
         SearchTerm laterThen = new ReceivedDateTerm(ComparisonTerm.GT, start);
         SearchTerm earlierThen = new ReceivedDateTerm(ComparisonTerm.LT, end);
         SearchTerm inPeriod = new AndTerm(laterThen, earlierThen);
 
         Message[] messages = folder.search(inPeriod);
-        return MessageAnalyzer.messageWrapping(messages);
+        MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
+                (IMAPFolder) folder);
+
+        closeFolder(folder);
+        return messageWraps;
     }
 
-    public MessageWrap[] getNotAnsweredMessagesInPeriod(Date start, Date end)
+    public MessageWrap[] getMessagesInPeriod(Date start, Date end,
+                                             String nameFolder)
             throws MessagingException {
-        Log.d(LOG_TAG, "mail getNotAnsweredMessagesInPeriod");
+
+        Log.d(LOG_TAG, "mail getMessagesInPeriod by name");
+        Folder folder = getFolder(nameFolder);
+
+        return getMessagesInPeriod(start, end, folder);
+    }
+
+
+    public MessageWrap[] getNotAnsweredMessagesInPeriod(Date start, Date end,
+                                                        Folder folder)
+            throws MessagingException {
+
+        Log.d(LOG_TAG, "mail getNotAnsweredMessagesInPeriod from folder");
+        openFolder(folder);
 
         SearchTerm laterThen = new ReceivedDateTerm(ComparisonTerm.GT, start);
         SearchTerm earlierThen = new ReceivedDateTerm(ComparisonTerm.LT, end);
         SearchTerm inPeriod = new AndTerm(laterThen, earlierThen);
 
-        SearchTerm answeredTerm = new FlagTerm(new Flags(Flags.Flag.ANSWERED), false);
+        Flags flags = new Flags(Flags.Flag.ANSWERED);
+        SearchTerm answeredTerm = new FlagTerm(flags, false);
         SearchTerm resultTerm = new AndTerm(inPeriod, answeredTerm);
 
         Message[] messages = folder.search(resultTerm);
-        return MessageAnalyzer.messageWrapping(messages);
+        MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
+                (IMAPFolder) folder);
+
+        closeFolder(folder);
+        return messageWraps;
     }
 
+    public MessageWrap[] getNotAnsweredMessagesInPeriod(Date start, Date end,
+                                                        String nameFolder)
+            throws MessagingException {
 
-    public MessageWrap[] getUnreadMessages() throws MessagingException {
-        Log.d(LOG_TAG, "mail getUnreadMessages");
+        Log.d(LOG_TAG, "mail getNotAnsweredMessagesInPeriod by name");
+        Folder folder = getFolder(nameFolder);
 
-        SearchTerm searchTerm = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
+        return getNotAnsweredMessagesInPeriod(start, end, folder);
+    }
+
+    public MessageWrap[] getUnreadMessages(Folder folder)
+            throws MessagingException {
+
+        Log.d(LOG_TAG, "mail getUnreadMessages from folder");
+        openFolder(folder);
+
+        Flags flags = new Flags(Flags.Flag.SEEN);
+        SearchTerm searchTerm = new FlagTerm(flags, false);
 
         Message[] messages = folder.search(searchTerm);
-        return MessageAnalyzer.messageWrapping(messages);
+        MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
+                (IMAPFolder) folder);
+
+        closeFolder(folder);
+        return messageWraps;
+    }
+
+    public MessageWrap[] getUnreadMessages(String nameFolder)
+            throws MessagingException {
+
+        Log.d(LOG_TAG, "mail getUnreadMessages by name");
+        Folder folder = getFolder(nameFolder);
+
+        return getUnreadMessages(folder);
+    }
+
+    private void openFolder(Folder folder) throws MessagingException {
+        Log.d(LOG_TAG, "mail openFolder " + folder.getName());
+
+        folder.open(Folder.READ_ONLY);
+    }
+
+    private Folder getFolder(String nameFolder) throws MessagingException {
+        Log.d(LOG_TAG, "mail getFolder");
+
+        return store.getFolder(nameFolder);
+    }
+
+    private void closeFolder(Folder folder) throws MessagingException {
+        Log.d(LOG_TAG, "mail closeFolder");
+
+        folder.close(false);
     }
 
     private void setThreadPolicy() {

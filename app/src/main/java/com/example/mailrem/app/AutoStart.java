@@ -7,7 +7,8 @@ import android.util.Log;
 
 public class AutoStart extends BroadcastReceiver {
 
-    private final static String LOG_TAG = "log_debug";
+    private final static String LOG_TAG = "mailrem_log";
+
     private final static int ID_NOTIFICATION = 3;
 
     @Override

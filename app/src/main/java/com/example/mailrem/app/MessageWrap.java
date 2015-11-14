@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class MessageWrap {
 
-    private long id;
+    private long uid;
     private String from;
     private String to;
     private Date date;
@@ -13,12 +13,12 @@ public class MessageWrap {
 
     public MessageWrap() {}
 
-    public long getId() {
-        return id;
+    public long getUID() {
+        return uid;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setUID(long uid) {
+        this.uid = uid;
     }
 
     public String getFrom() {
