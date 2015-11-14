@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class UpdateData extends BroadcastReceiver {
@@ -31,10 +30,9 @@ public class UpdateData extends BroadcastReceiver {
         Log.d(LOG_TAG, "set next update");
 
         Intent intentThis = new Intent(context, UpdateData.class);
-        Log.d(LOG_TAG, "uid from set ************* " + String.valueOf(uid));
         intentThis.putExtra("uid", uid);
         intentThis.putExtra("interval", interval);
-        //Log.d(LOG_TAG, "uid from set ************* " + String.valueOf(intentThis.getLongExtra("uid", 1)));
+
         PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0,
                 intentThis, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -62,16 +60,13 @@ public class UpdateData extends BroadcastReceiver {
         Log.d(LOG_TAG, "update br onReceive");
 
         MailAgent mailAgent = new MailAgent();
-        long maxUID = 0;
+        long nextUID = 0;
 
         try {
-            long uid = intent.getLongExtra("uid", 1);
-            Log.d(LOG_TAG, "uid ************* " + String.valueOf(uid));
-            Log.d(LOG_TAG, "uid ************* " + String.valueOf(intent.getLongExtra("uid", 1)));
-            maxUID = uid;
+            long uid = intent.getLongExtra("uid", 0);
+            nextUID = uid;
             mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
 
-            Log.d(LOG_TAG, "uid ************* " + String.valueOf(uid));
             MessageWrap[] messagesWrap = mailAgent.getMessagesSinceUID(uid, "INBOX");
 
             mailAgent.disconnect();
@@ -79,8 +74,8 @@ public class UpdateData extends BroadcastReceiver {
             DataBase dataBase = new DataBase(context);
             for (MessageWrap messageWrap : messagesWrap) {
                 dataBase.addIfNotExistMessage(messageWrap);
-                if (Long.valueOf(messageWrap.getUID()).compareTo(maxUID) >= 0) {
-                    maxUID = messageWrap.getUID() + 1;
+                if (messageWrap.getUID() >= nextUID) {
+                    nextUID = messageWrap.getUID() + 1;
                 }
             }
         } catch (Exception e) {
@@ -97,23 +92,8 @@ public class UpdateData extends BroadcastReceiver {
             Log.e(LOG_TAG, e.getMessage());
         }
 
-        long interval = intent.getLongExtra("interval", 1);
-        Log.d(LOG_TAG, "maxuid ************* " + String.valueOf(maxUID));
-        setNextUpdate(context, interval, maxUID);
-
-        /*int count = getCountFromSettings(context);
-
-        new Notifications(context).sendNotification(Integer.toString(count), ID_NOTIFICATION);
-
-        if (count < COUNT_REPEAT) {
-            setAlarmManager(context);
-            ++count;
-        }
-        else {
-            count = 0;
-        }
-
-        setCountInSettings(context, count);*/
+        long interval = intent.getLongExtra("interval", 0);
+        setNextUpdate(context, interval, nextUID);
     }
 
     private int getCountFromSettings(Context context) {
@@ -128,25 +108,4 @@ public class UpdateData extends BroadcastReceiver {
         editor.putString(COUNT, Integer.toString(count));
         editor.apply();
     }
-
-/*    public static void startUpdate(Context context) {
-        Log.d(LOG_TAG, "start update");
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intentToBR = new Intent(context, UpdateData.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
-                intentToBR, PendingIntent.FLAG_CANCEL_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                SPACED_REPETITION, pendingIntent);
-    }
-
-    public void stopUpdate(Context context) {
-        Log.d(LOG_TAG, "stop update");
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intentToBR = new Intent(context, UpdateData.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
-                intentToBR, PendingIntent.FLAG_CANCEL_CURRENT);
-        alarmManager.cancel(pendingIntent);
-    }*/
 }

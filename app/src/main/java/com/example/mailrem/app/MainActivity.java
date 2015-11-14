@@ -33,14 +33,12 @@ public class MainActivity extends Activity {
         Log.d(LOG_TAG, "button start click");
 
         UpdateData.setNextUpdate(getBaseContext(), 10 * 1000, 0);
-        //startService(new Intent(this, UpdateService.class));
     }
 
     public void onClickButtonStop(View v) {
         Log.d(LOG_TAG, "button stop click");
 
         UpdateData.stopUpdate(getBaseContext());
-        //stopService(new Intent(this, UpdateService.class));
     }
 
     public void onClickButtonNotification(View v) {

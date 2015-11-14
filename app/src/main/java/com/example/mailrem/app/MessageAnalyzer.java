@@ -39,6 +39,18 @@ public final class MessageAnalyzer {
         return messageWraps;
     }
 
+    public static long[] getMessagesUID(Message[] messages, IMAPFolder folder) {
+        Log.d(LOG_TAG, "wrapping get messages uid");
+
+        long[] messagesUID = new long[messages.length];
+
+        for (int index = 0; index < messages.length; ++index) {
+            messagesUID[index] = getUID(messages[index], folder);
+        }
+
+        return messagesUID;
+    }
+
     private static long getUID(Message message, IMAPFolder folder) {
         Log.d(LOG_TAG, "message get uid");
         try {

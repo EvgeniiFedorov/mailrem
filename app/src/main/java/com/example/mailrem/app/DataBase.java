@@ -19,14 +19,14 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MailBase";
 
     private static final String TABLE_MAILS = "Mails";
-    private static final String COLUMN_UID = "'uid'";
-    private static final String COLUMN_FROM = "'from'";
-    private static final String COLUMN_TO = "'to'";
-    private static final String COLUMN_DATE = "'date'";
-    private static final String COLUMN_SUBJECT = "'subject'";
-    private static final String COLUMN_BODY = "'body'";
-    private static final String COLUMN_STATUS = "'status'";
-    private static final String COLUMN_SCHEDULE = "'schedule'";
+    private static final String COLUMN_UID = "uid";
+    private static final String COLUMN_FROM = "from_field";
+    private static final String COLUMN_TO = "to_field";
+    private static final String COLUMN_DATE = "date_field";
+    private static final String COLUMN_SUBJECT = "subject_field";
+    private static final String COLUMN_BODY = "body_field";
+    private static final String COLUMN_STATUS = "status";
+    private static final String COLUMN_SCHEDULE = "schedule";
 
     private static final String[] COLUMNS_MAILS = {COLUMN_UID, COLUMN_FROM,
             COLUMN_TO, COLUMN_DATE, COLUMN_SUBJECT, COLUMN_BODY,
@@ -65,42 +65,13 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     public void addIfNotExistMessage(MessageWrap message) {
+        Log.d(LOG_TAG, "add message if not exist db");
         if (getMessage(message.getUID()) == null) {
             addMessage(message);
         }
         else {
             Log.i(LOG_TAG, "message already exists");
         }
-        //String query = "SELECT * FROM " + TABLE_MAILS +
-        //        " WHERE " + COLUMN_UID + " = " + String.valueOf(message.getUID());
-    //    SQLiteDatabase db = getReadableDatabase();
-
-        //String selection = COLUMN_UID + "= ?";
-    //    String selection = "'uid' = ?";
-    //    String[] selectionArgs = {String.valueOf(message.getUID())};
-
-    //    Cursor cursor = db.query(
-    //            TABLE_MAILS,
-    //            COLUMNS_MAILS,
-    //            selection,
-    //            selectionArgs,
-    //            null,
-    //            null,
-    //            null
-    //    );
-
-        //Cursor cursor = db.rawQuery(query, null);
-    //    int count = cursor.getCount();
-
-    //    cursor.close();
-    //    db.close();
-
-    //    if (count == 0) {
-    //        addMessage(message);
-    //    }
-    //    else {
-    //        Log.i(LOG_TAG, "message already exists");
-    //    }
     }
 
     public void addMessage(MessageWrap message) {
@@ -109,9 +80,9 @@ public class DataBase extends SQLiteOpenHelper {
 
         ContentValues values = messageToContentValues(message);
 
-        int schedule = dateToInt(new Date()) + 3 * 60;
+        int scheduleTime = dateToInt(new Date()) + 60;
         values.put(COLUMN_STATUS, 1);
-        values.put(COLUMN_SCHEDULE, schedule);
+        values.put(COLUMN_SCHEDULE, scheduleTime);
 
         db.insert(TABLE_MAILS, null, values);
         db.close();
@@ -134,8 +105,6 @@ public class DataBase extends SQLiteOpenHelper {
                 null,
                 null
         );
-
-        Log.w(LOG_TAG, "count ******** " + String.valueOf(cursor.getCount()));
 
         if (!cursor.moveToFirst()) {
             return null;
@@ -177,7 +146,7 @@ public class DataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         int currentDate = dateToInt(new Date());
-        String selection = COLUMN_DATE + " <= ?";
+        String selection = COLUMN_SCHEDULE + " <= ?";
         String[] selectionArgs = {String.valueOf(currentDate)};
 
         Cursor cursor = db.query(
@@ -190,7 +159,6 @@ public class DataBase extends SQLiteOpenHelper {
                 null,
                 null
         );
-
 
         if (!cursor.moveToFirst()) {
             return messages;

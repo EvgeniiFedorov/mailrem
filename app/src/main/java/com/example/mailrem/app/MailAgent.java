@@ -63,17 +63,14 @@ public class MailAgent {
     public MessageWrap[] getMessagesSinceUID(long uid, Folder folder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getMessagesSinceUID from folder " + String.valueOf(uid));
+        Log.d(LOG_TAG, "mail getMessagesSinceUID from folder");
         openFolder(folder);
 
         IMAPFolder imapFolder = (IMAPFolder) folder;
-        Message[] messages = imapFolder.getMessagesByUID(uid, UIDFolder.LASTUID);
-        Log.d(LOG_TAG, String.valueOf(messages.length));
+        Message[] messages = imapFolder.getMessagesByUID(uid, Long.MAX_VALUE);
 
         MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
                 imapFolder);
-
-        Log.d(LOG_TAG, String.valueOf(messageWraps[0].getUID()));
 
         closeFolder(folder);
         return messageWraps;
@@ -90,6 +87,9 @@ public class MailAgent {
 
     public long[] getUIDForAnsweredMessages(Folder folder)
             throws MessagingException {
+
+
+        Log.d(LOG_TAG, "mail getUIDForAnsweredMessages from folder");
         openFolder(folder);
 
         Flags flags = new Flags(Flags.Flag.ANSWERED);
@@ -97,11 +97,11 @@ public class MailAgent {
 
         Message[] messages = folder.search(searchTerm);
 
-        MessageWrap[] messageWraps = MessageAnalyzer.messageWrapping(messages,
+        long[] messagesUID = MessageAnalyzer.getMessagesUID(messages,
                 (IMAPFolder) folder);
 
         closeFolder(folder);
-        return null;
+        return messagesUID;
     }
 
     public MessageWrap[] getMessagesInPeriod(Date start, Date end,
