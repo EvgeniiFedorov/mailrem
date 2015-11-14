@@ -32,6 +32,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
 
 //    sourceSets {
 //        unitTest {
@@ -44,7 +45,6 @@ android {
 //        unitTestCompile.extendsFrom runtime
 //        unitTestRuntime.extendsFrom unitTestCompile
 //    }
-}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -52,7 +52,7 @@ dependencies {
     compile 'com.sun.mail:javax.mail:1.5.4'
 
 //    unitTestCompile files("$project.buildDir/intermediates/classes/debug")
-//    androidUnitTestCompile 'junit:junit:4.12'
+//    unitTestCompile 'junit:junit:4.12'
 }
 
 task appStart(type: Exec, dependsOn: 'installDebug') {
@@ -62,7 +62,7 @@ task appStart(type: Exec, dependsOn: 'installDebug') {
 
 //task unitTest(type:Test, dependsOn: assemble) {
 //    description = "run unit tests"
-//    testClassesDir = project.android.sourceSetsContainer.unitTest.outputs.classesDir
+//    testClassesDir = project.android.sourceSetsContainer.unitTest..classesDir
 //    classpath = project.sourceSetsContainer.unitTest.runtimeClasspath
 //}
 
