@@ -5,4 +5,15 @@
     <string name="buttonStop_string">Stop service</string>
     <string name="buttonNotification_string">Send notification</string>
     <string name="buttonMail_string">Get message</string>
+
+    <string name="empty_mail_list">No message</string>
+
+    <!-- Menu-->
+    <string name="settings_title">Settings</string>
+    <string name="mails_title">Mails</string>
+
+    <!--Settings-->
+    <string name="settings_label">Settings</string>
+
+
 </resources>

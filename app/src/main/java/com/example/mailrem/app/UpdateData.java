@@ -26,8 +26,51 @@ public class UpdateData extends BroadcastReceiver {
     private final static String USER_EMAIL = "ttestname1@mail.ru";
     private final static String USER_PASSWORD = "testpassword";
 
-    public static void setNextUpdate(Context context, long interval, long uid) {
+//    private static volatile boolean stopUpdate = false;
+
+    public static void startUpdateProcess(Context context, long interval) {
+        long uid = 0; //get uid from file
+
+        setNextUpdate(context, interval, uid);
+    }
+
+    public static void stopUpdate(Context context) {
+        Log.d(LOG_TAG, "stop update");
+//        stopUpdate = true;
+        Intent intentThis = new Intent(context, UpdateData.class);
+        PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0, intentThis, 0);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingThis);
+
+        //save uid in file :updateProcess
+    }
+
+    public UpdateData() {
+        Log.d(LOG_TAG, "constructor updateData");
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.d(LOG_TAG, "update br onReceive");
+
+        long uid = intent.getLongExtra("uid", 0);
+        long interval = intent.getLongExtra("interval", 0);
+        long nextUID = updateDB(context, uid);
+
+        notifyFromDB(context);
+
+        setNextUpdate(context, interval, nextUID);
+    }
+
+    private static void setNextUpdate(Context context, long interval, long uid) {
         Log.d(LOG_TAG, "set next update");
+
+//        if (stopUpdate) {
+//            stopUpdate = false;
+//            Log.d(LOG_TAG, "set next update delete");
+//            return;
+//        }
 
         Intent intentThis = new Intent(context, UpdateData.class);
         intentThis.putExtra("uid", uid);
@@ -41,30 +84,11 @@ public class UpdateData extends BroadcastReceiver {
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval, pendingThis);
     }
 
-    public static void stopUpdate(Context context) {
-        Log.d(LOG_TAG, "stop update");
-
-        Intent intentThis = new Intent(context, UpdateData.class);
-        PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0, intentThis, 0);
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingThis);
-    }
-
-    public UpdateData() {
-        Log.d(LOG_TAG, "constructor updateData");
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.d(LOG_TAG, "update br onReceive");
-
-        MailAgent mailAgent = new MailAgent();
-        long nextUID = 0;
-
+    private long updateDB(Context context, long uid) {
         try {
-            long uid = intent.getLongExtra("uid", 0);
-            nextUID = uid;
+            long nextUID = uid;
+
+            MailAgent mailAgent = new MailAgent();
             mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
 
             MessageWrap[] messagesWrap = mailAgent.getMessagesSinceUID(uid, "INBOX");
@@ -78,10 +102,14 @@ public class UpdateData extends BroadcastReceiver {
                     nextUID = messageWrap.getUID() + 1;
                 }
             }
+            return nextUID;
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
+            return uid;
         }
+    }
 
+    private void notifyFromDB(Context context) {
         try {
             DataBase db = new DataBase(context);
             List<MessageWrap> messages = db.getMessagesForNotify();
@@ -91,9 +119,6 @@ public class UpdateData extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         }
-
-        long interval = intent.getLongExtra("interval", 0);
-        setNextUpdate(context, interval, nextUID);
     }
 
     private int getCountFromSettings(Context context) {

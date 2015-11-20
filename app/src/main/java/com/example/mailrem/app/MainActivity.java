@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,7 +35,7 @@ public class MainActivity extends Activity {
     public void onClickButtonStart(View v) {
         Log.d(LOG_TAG, "button start click");
 
-        UpdateData.setNextUpdate(getBaseContext(), 10 * 1000, 0);
+        UpdateData.startUpdateProcess(getBaseContext(), 10 * 1000);
     }
 
     public void onClickButtonStop(View v) {
@@ -62,6 +65,26 @@ public class MainActivity extends Activity {
             mailAgent.disconnect();
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return onOptionsItemSelected(item);
         }
     }
 }
