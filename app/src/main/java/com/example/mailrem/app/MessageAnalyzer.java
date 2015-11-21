@@ -4,6 +4,7 @@ import android.util.Log;
 import com.sun.mail.imap.IMAPFolder;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 
 import java.util.Date;
 
@@ -69,7 +70,18 @@ public final class MessageAnalyzer {
                 Log.i(LOG_TAG, "No field from");
                 return ERROR_STRING;
             }
-            return addresses[0].toString();
+
+            InternetAddress internetAddress = (InternetAddress) addresses[0];
+
+            String personal = "undefined";
+            if (internetAddress.getPersonal() != null) {
+                personal = internetAddress.getPersonal();
+            }
+            String address = "undefined";
+            if (internetAddress.getAddress() != null) {
+                address = internetAddress.getAddress();
+            }
+            return "From: " + personal + "\nAddress: " + address;
         } catch (MessagingException e) {
             Log.e(LOG_TAG, e.getMessage());
             return ERROR_STRING;

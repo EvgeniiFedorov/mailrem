@@ -80,8 +80,9 @@ public class DataBase extends SQLiteOpenHelper {
 
         ContentValues values = messageToContentValues(message);
 
-        int scheduleTime = dateToInt(new Date()) + 60;
-        values.put(COLUMN_STATUS, 1);
+        int status = 0;
+        int scheduleTime = dateToInt(message.getDate()) + ScheduleManager.sheduleTime(status);
+        values.put(COLUMN_STATUS, status);
         values.put(COLUMN_SCHEDULE, scheduleTime);
 
         db.insert(TABLE_MAILS, null, values);
@@ -185,11 +186,14 @@ public class DataBase extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateMessage(MessageWrap message) {
+    public void updateMessage(MessageWrap message, int lastScheduleTime, int status) {
         Log.d(LOG_TAG, "update message from db");
         SQLiteDatabase db = getReadableDatabase();
 
         ContentValues values = messageToContentValues(message);
+        int newScheduleTime = lastScheduleTime + ScheduleManager.sheduleTime(status);
+        values.put(COLUMN_STATUS, status);
+        values.put(COLUMN_SCHEDULE, newScheduleTime);
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(message.getUID())};

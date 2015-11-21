@@ -5,15 +5,17 @@
               android:layout_height="match_parent">
     <TextView
             android:id="@+id/from"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/message_view_background"
             android:textSize="@dimen/abc_text_size_menu_material" >
     </TextView>
 
     <TextView
             android:id="@+id/subject"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_small_material" >
+            android:background="@color/message_view_background"
+            android:textSize="@dimen/abc_text_size_title_material" >
     </TextView>
 </LinearLayout>
