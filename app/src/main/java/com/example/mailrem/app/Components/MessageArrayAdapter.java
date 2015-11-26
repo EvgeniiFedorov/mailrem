@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.example.mailrem.app.pojo.MessageWrap;
+import com.example.mailrem.app.R;
 
 import java.util.List;
 

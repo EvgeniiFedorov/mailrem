@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.mailrem.app.pojo.MailAgent;
+import com.example.mailrem.app.pojo.MessageWrap;
+import com.example.mailrem.app.R;
 
 public class MainActivity extends Activity {
 

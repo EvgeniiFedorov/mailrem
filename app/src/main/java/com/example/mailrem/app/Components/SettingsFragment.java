@@ -1,7 +1,9 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import com.example.mailrem.app.R;
 
 public class SettingsFragment extends PreferenceFragment {
 

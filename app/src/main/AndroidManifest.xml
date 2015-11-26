@@ -11,7 +11,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name=".MainActivity"
+            android:name=".components.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -21,25 +21,25 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SettingsActivity"
+        <activity android:name=".components.SettingsActivity"
                   android:label="@string/settings_label" />
 
         <service
-            android:name=".UpdateService"
+            android:name=".components.UpdateService"
             android:enabled="true"
             android:process=":updateProcess" />
 
-        <receiver android:name=".AutoStart" >
+        <receiver android:name=".components.AutoStart" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".UpdateData"
+            android:name=".components.UpdateData"
             android:process=":updateProcess" />
 
         <service
-            android:name=".UpdateDataService"
+            android:name=".components.UpdateDataService"
             android:exported="false" />
     </application>
 

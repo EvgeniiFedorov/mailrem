@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.pojo;
 
 import java.util.Date;
 

@@ -1,9 +1,12 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+
+import com.example.mailrem.app.pojo.MessageWrap;
+import com.example.mailrem.app.R;
 
 import java.util.List;
 

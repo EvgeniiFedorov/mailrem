@@ -1,9 +1,12 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.example.mailrem.app.pojo.MailAgent;
+import com.example.mailrem.app.pojo.MessageWrap;
 
 import java.util.Calendar;
 import java.util.Date;

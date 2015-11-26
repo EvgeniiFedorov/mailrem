@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.app.Activity;
 import android.os.Bundle;

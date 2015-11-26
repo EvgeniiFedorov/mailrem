@@ -1,9 +1,11 @@
 package com.example.mailrem.app;
 
-import org.junit.Assert;
-import org.junit.Test;
+import com.example.mailrem.app.pojo.MailAgent;
+import com.example.mailrem.app.pojo.MessageWrap;
 
-import javax.mail.Message;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import java.util.Date;
 
 public class MailAgentTest {
@@ -17,6 +19,11 @@ public class MailAgentTest {
     }
 
     @Test
+    public void addition_isCorrect() throws Exception {
+        assertEquals(4, 2 + 2);
+    }
+
+    @Test
     public void testGetMessagesInPeriod() throws Exception {
         MailAgent mailAgent = new MailAgent();
         mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
@@ -24,10 +31,10 @@ public class MailAgentTest {
         Date startDate = new Date(0);
         Date endDate = new Date();
 
-        Message[] messages = mailAgent.getMessagesInPeriod("test1", startDate, endDate);
+        MessageWrap[] messages = mailAgent.getMessagesInPeriod(startDate, endDate, "test1");
         mailAgent.disconnect();
 
-        Assert.assertEquals(messages.length, 4);
+        assertEquals(messages.length, 4);
     }
 
     @Test
@@ -35,9 +42,9 @@ public class MailAgentTest {
         MailAgent mailAgent = new MailAgent();
         mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
 
-        Message[] messages = mailAgent.getUnreadMessages("test2");
+        MessageWrap[] messages = mailAgent.getUnreadMessages("test1");
         mailAgent.disconnect();
 
-        Assert.assertEquals(messages.length, 4);
+        assertEquals(messages.length, 2);
     }
 }

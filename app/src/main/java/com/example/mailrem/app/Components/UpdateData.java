@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.example.mailrem.app.pojo.MailAgent;
+import com.example.mailrem.app.pojo.MessageWrap;
 
 import java.util.List;
 

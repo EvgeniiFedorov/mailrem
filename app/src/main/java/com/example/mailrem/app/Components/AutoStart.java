@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

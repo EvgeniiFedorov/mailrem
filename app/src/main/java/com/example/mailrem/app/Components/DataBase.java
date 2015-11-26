@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.example.mailrem.app.pojo.MessageWrap;
+import com.example.mailrem.app.pojo.ScheduleManager;
 
 import java.util.Date;
 import java.util.LinkedList;

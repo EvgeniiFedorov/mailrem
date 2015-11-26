@@ -1,4 +1,4 @@
-package com.example.mailrem.app;
+package com.example.mailrem.app.components;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.example.mailrem.app.pojo.MessageWrap;
+import com.example.mailrem.app.R;
 
 import java.util.List;
 
