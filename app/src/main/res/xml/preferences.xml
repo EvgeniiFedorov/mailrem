@@ -1,12 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
+    <PreferenceScreen
             android:key="notif"
-            android:summary="Enable notifications"
-            android:title="Notifications"
+            android:title="Notification"
+            android:persistent="false">
+
+        <SwitchPreference
+                android:key="notify_switch"
+                android:summary="Enable/disable notifications"
+                android:title="Switch on"
+                android:defaultValue="true">
+        </SwitchPreference>
+
+        <CheckBoxPreference
+                android:key="notify_sound"
+                android:summary="Enable/disable sound in notifications"
+                android:title="Sound"
+                android:defaultValue="true">
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+                android:key="notify_vibration"
+                android:summary="Enable/disable vibration in notifications"
+                android:title="Vibration"
+                android:defaultValue="true">
+        </CheckBoxPreference>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+            android:key="schedule"
+            android:title="Schedule notification"
+            android:persistent="false">
+
+        <PreferenceScreen
+                android:key="first_stage"
+                android:title="First stage"
+                android:persistent="false">
+
+            <ListPreference
+                    android:key="first_stage_duration"
+                    android:summary="Duration first stage"
+                    android:title="Duration"
+                    android:entries="@array/stage_duration_entries"
+                    android:entryValues="@array/stage_duration_values"
+                    android:defaultValue="1">
+        </ListPreference>
+
+            <ListPreference
+                    android:key="first_stage_frequency"
+                    android:summary="Frequency of reminder for first stage"
+                    android:title="Frequency"
+                    android:entries="@array/stage_frequency_entries"
+                    android:entryValues="@array/stage_frequency_values"
+                    android:defaultValue="1">
+            </ListPreference>
+        </PreferenceScreen>
+
+        <PreferenceScreen
+                android:key="second_stage"
+                android:title="Second stage"
+                android:persistent="false">
+
+            <ListPreference
+                    android:key="second_stage_duration"
+                    android:summary="Duration second stage"
+                    android:title="Duration"
+                    android:entries="@array/stage_duration_entries"
+                    android:entryValues="@array/stage_duration_values"
+                    android:defaultValue="1">
+            </ListPreference>
+
+            <ListPreference
+                    android:key="second_stage_frequency"
+                    android:summary="Frequency of reminder for second stage"
+                    android:title="Frequency"
+                    android:entries="@array/stage_frequency_entries"
+                    android:entryValues="@array/stage_frequency_values"
+                    android:defaultValue="1">
+            </ListPreference>
+        </PreferenceScreen>
+
+        <PreferenceScreen
+                android:key="third_stage"
+                android:title="Third stage"
+                android:persistent="false">
+
+            <ListPreference
+                    android:key="third_stage_duration"
+                    android:summary="Duration third stage"
+                    android:title="Duration"
+                    android:entries="@array/stage_duration_entries"
+                    android:entryValues="@array/stage_duration_values"
+                    android:defaultValue="1">
+            </ListPreference>
+
+            <ListPreference
+                    android:key="third_stage_frequency"
+                    android:summary="Frequency of reminder for third stage"
+                    android:title="Frequency"
+                    android:entries="@array/stage_frequency_entries"
+                    android:entryValues="@array/stage_frequency_values"
+                    android:defaultValue="1">
+            </ListPreference>
+        </PreferenceScreen>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+            android:key="update"
+            android:title="Update settings"
+            android:persistent="false">
+
+        <CheckBoxPreference
+                android:key="use_wifi"
+                android:summary="Update only wifi connection"
+                android:title="WI-FI"
+                android:defaultValue="false">
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
+                android:key="use_rouming"
+                android:summary="Do not update in rouming"
+                android:title="Rouming"
+                android:defaultValue="true">
+        </CheckBoxPreference>
+
+        <ListPreference
+                android:key="update_frequency"
+                android:summary="Frequency of update"
+                android:title="Frequency"
+                android:entries="@array/update_frequency_entries"
+                android:entryValues="@array/update_frequency_values"
+                android:defaultValue="1">
+        </ListPreference>
+
+        <ListPreference
+                android:key="update_interval"
+                android:summary="Interval browsing messages"
+                android:title="Interval browsing"
+                android:entries="@array/update_interval_entries"
+                android:entryValues="@array/update_interval_values"
+                android:defaultValue="1">
+        </ListPreference>
+    </PreferenceScreen>
+
+    <CheckBoxPreference
+            android:key="notif1"
+            android:summary="Enable notifications1"
+            android:title="Notifications1"
             android:defaultValue="true">
     </CheckBoxPreference>
+
+    <Preference
+        android:title="List">
+    </Preference>
 
     <EditTextPreference
             android:key="address"
@@ -14,5 +161,4 @@
             android:title="Address"
             android:defaultValue="text">
     </EditTextPreference>
-
 </PreferenceScreen>

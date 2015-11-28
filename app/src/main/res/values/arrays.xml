@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="stage_duration_entries">
+        <item>1 day</item>
+        <item>2 day</item>
+        <item>3 day</item>
+        <item>5 day</item>
+        <item>10 day</item>
+        <item>30 day</item>
+    </string-array>
+
+    <string-array name="stage_duration_values">
+        <item>1 * 24 * 60 * 60</item>
+        <item>2 * 24 * 60 * 60</item>
+        <item>3 * 24 * 60 * 60</item>
+        <item>5 * 24 * 60 * 60</item>
+        <item>10 * 24 * 60 * 60</item>
+        <item>30 * 24 * 60 * 60</item>
+    </string-array>
+
+    <string-array name="stage_frequency_entries">
+        <item>1 hour</item>
+        <item>2 hour</item>
+        <item>3 hour</item>
+        <item>5 hour</item>
+        <item>12 hour</item>
+        <item>24 hour</item>
+    </string-array>
+
+    <string-array name="stage_frequency_values">
+        <item>1 * 60 * 60</item>
+        <item>2 * 60 * 60</item>
+        <item>3 * 60 * 60</item>
+        <item>5 * 60 * 60</item>
+        <item>12 * 60 * 60</item>
+        <item>24 * 60 * 60</item>
+    </string-array>
+
+    <string-array name="update_frequency_entries">
+        <item>5 min</item>
+        <item>15 min</item>
+        <item>30 min</item>
+        <item>1 hour</item>
+        <item>2 hour</item>
+        <item>3 hour</item>
+    </string-array>
+
+    <string-array name="update_frequency_values">
+        <item>5 * 60</item>
+        <item>10 * 60</item>
+        <item>30 * 60</item>
+        <item>1 * 60 * 60</item>
+        <item>2 * 60 * 60</item>
+        <item>3 * 60 * 60</item>
+    </string-array>
+
+    <string-array name="update_interval_entries">
+        <item>3 day</item>
+        <item>5 day</item>
+        <item>1 week</item>
+        <item>2 week</item>
+        <item>1 month</item>
+        <item>6 month</item>
+    </string-array>
+
+    <string-array name="update_interval_values">
+        <item>3 * 24 * 60 * 60</item>
+        <item>5 * 24 * 60 * 60</item>
+        <item>7 * 24 * 60  * 60</item>
+        <item>14 * 24 * 60  * 60</item>
+        <item>30 * 24 * 60  * 60</item>
+        <item>180 * 24 * 60  * 60</item>
+    </string-array>
+</resources>

@@ -29,7 +29,7 @@ public class UpdateData extends BroadcastReceiver {
     private final static String USER_EMAIL = "ttestname1@mail.ru";
     private final static String USER_PASSWORD = "testpassword";
 
-//    private static volatile boolean stopUpdate = false;
+    private static volatile boolean stopUpdate = false;
 
     public static void startUpdateProcess(Context context, long interval) {
         long uid = 0; //get uid from file
@@ -39,12 +39,12 @@ public class UpdateData extends BroadcastReceiver {
 
     public static void stopUpdate(Context context) {
         Log.d(LOG_TAG, "stop update");
-//        stopUpdate = true;
-        Intent intentThis = new Intent(context, UpdateData.class);
+        stopUpdate = true;
+/*        Intent intentThis = new Intent(context, UpdateData.class);
         PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0, intentThis, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingThis);
+        alarmManager.cancel(pendingThis);*/
 
         //save uid in file :updateProcess
     }
@@ -57,23 +57,45 @@ public class UpdateData extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(LOG_TAG, "update br onReceive");
 
-        long uid = intent.getLongExtra("uid", 0);
+        new UpdateThread(context, intent).start();
+
+        /*long uid = intent.getLongExtra("uid", 0);
         long interval = intent.getLongExtra("interval", 0);
         long nextUID = updateDB(context, uid);
 
         notifyFromDB(context);
 
-        setNextUpdate(context, interval, nextUID);
+        setNextUpdate(context, interval, nextUID);*/
+    }
+
+    private class UpdateThread extends Thread {
+        private final Context context;
+        private final Intent intent;
+
+        public UpdateThread(Context context, Intent intent) {
+            this.context = context;
+            this.intent = intent;
+        }
+
+        public void run() {
+            long uid = intent.getLongExtra("uid", 0);
+            long interval = intent.getLongExtra("interval", 0);
+            long nextUID = updateDB(context, uid);
+
+            notifyFromDB(context);
+
+            setNextUpdate(context, interval, nextUID);
+        }
     }
 
     private static void setNextUpdate(Context context, long interval, long uid) {
         Log.d(LOG_TAG, "set next update");
 
-//        if (stopUpdate) {
-//            stopUpdate = false;
-//            Log.d(LOG_TAG, "set next update delete");
-//            return;
-//        }
+        if (stopUpdate) {
+            stopUpdate = false;
+            Log.d(LOG_TAG, "set next update delete");
+            return;
+        }
 
         Intent intentThis = new Intent(context, UpdateData.class);
         intentThis.putExtra("uid", uid);

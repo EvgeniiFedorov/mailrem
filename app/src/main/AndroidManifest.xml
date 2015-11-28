@@ -22,7 +22,12 @@
         </activity>
 
         <activity android:name=".components.SettingsActivity"
-                  android:label="@string/settings_label" />
+                  android:label="@string/settings_label" >
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".components.UpdateService"
@@ -34,9 +39,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <receiver
-            android:name=".components.UpdateData"
-            android:process=":updateProcess" />
+            android:name=".components.UpdateData"/>
 
         <service
             android:name=".components.UpdateDataService"

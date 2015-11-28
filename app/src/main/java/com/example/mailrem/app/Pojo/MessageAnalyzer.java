@@ -5,7 +5,9 @@ import com.sun.mail.imap.IMAPFolder;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
+import java.io.IOException;
 import java.util.Date;
 
 public final class MessageAnalyzer {
@@ -124,26 +126,40 @@ public final class MessageAnalyzer {
     }
 
     private static String getBody(Message message) {
-        /*Log.d(LOG_TAG, "message get body");
-        try {
+        Log.d(LOG_TAG, "message get body");
+        /*try {
+            Log.d(LOG_TAG,"11");
             if (message.isMimeType("text/*")) {
+                Log.d(LOG_TAG,"12");
                 return (String) message.getContent();
             }
+            Log.d(LOG_TAG,"13");
 
             if (message.isMimeType("multipart/*")) {
+                Log.d(LOG_TAG,"1");
                 Multipart multipart = (Multipart) message.getContent();
+                Log.d(LOG_TAG,"2");
                 for (int partNumber = 0; partNumber < multipart.getCount(); ++partNumber) {
+                    Log.d(LOG_TAG,"3");
                     BodyPart bodyPart = multipart.getBodyPart(partNumber);
-                    if (bodyPart.isMimeType("text/*")) {
+                    Log.d(LOG_TAG,"4");
+                    if (bodyPart.isMimeType("text/plain")) {
+                        Log.d(LOG_TAG,"5");
                         return (String) bodyPart.getContent();
                     }
+                    Log.d(LOG_TAG,"6");
                 }
+                Log.d(LOG_TAG,"7");
             }
+            Log.d(LOG_TAG,"8");
             return TEXT_NOT_FOUND;
         } catch (MessagingException e) {
             Log.e(LOG_TAG, e.getMessage());
             return ERROR_STRING;
         } catch (IOException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            return ERROR_STRING;
+        } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
             return ERROR_STRING;
         }*/
