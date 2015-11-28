@@ -41,7 +41,10 @@
         </receiver>
 
         <receiver
-            android:name=".components.UpdateData"/>
+                android:name=".components.UpdateData"/>
+
+        <receiver
+                android:name=".components.NotifyFromDB"/>
 
         <service
             android:name=".components.UpdateDataService"

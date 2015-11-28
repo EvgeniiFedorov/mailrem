@@ -40,12 +40,14 @@ public class MainActivity extends Activity {
         Log.d(LOG_TAG, "button start click");
 
         UpdateData.startUpdateProcess(getBaseContext(), 10 * 1000);
+        NotifyFromDB.startNotifyProcess(getBaseContext(), 5 * 1000);
     }
 
     public void onClickButtonStop(View v) {
         Log.d(LOG_TAG, "button stop click");
 
-        UpdateData.stopUpdate(getBaseContext());
+        UpdateData.stopUpdate();
+        NotifyFromDB.stopNotify();
     }
 
     public void onClickButtonNotification(View v) {

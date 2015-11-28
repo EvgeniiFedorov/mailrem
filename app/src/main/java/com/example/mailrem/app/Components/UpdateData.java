@@ -32,21 +32,15 @@ public class UpdateData extends BroadcastReceiver {
     private static volatile boolean stopUpdate = false;
 
     public static void startUpdateProcess(Context context, long interval) {
+        Log.d(LOG_TAG, "start update process");
         long uid = 0; //get uid from file
 
         setNextUpdate(context, interval, uid);
     }
 
-    public static void stopUpdate(Context context) {
+    public static void stopUpdate() {
         Log.d(LOG_TAG, "stop update");
         stopUpdate = true;
-/*        Intent intentThis = new Intent(context, UpdateData.class);
-        PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0, intentThis, 0);
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingThis);*/
-
-        //save uid in file :updateProcess
     }
 
     public UpdateData() {
@@ -58,14 +52,6 @@ public class UpdateData extends BroadcastReceiver {
         Log.d(LOG_TAG, "update br onReceive");
 
         new UpdateThread(context, intent).start();
-
-        /*long uid = intent.getLongExtra("uid", 0);
-        long interval = intent.getLongExtra("interval", 0);
-        long nextUID = updateDB(context, uid);
-
-        notifyFromDB(context);
-
-        setNextUpdate(context, interval, nextUID);*/
     }
 
     private class UpdateThread extends Thread {
@@ -81,8 +67,6 @@ public class UpdateData extends BroadcastReceiver {
             long uid = intent.getLongExtra("uid", 0);
             long interval = intent.getLongExtra("interval", 0);
             long nextUID = updateDB(context, uid);
-
-            notifyFromDB(context);
 
             setNextUpdate(context, interval, nextUID);
         }
@@ -131,18 +115,6 @@ public class UpdateData extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
             return uid;
-        }
-    }
-
-    private void notifyFromDB(Context context) {
-        try {
-            DataBase db = new DataBase(context);
-            List<MessageWrap> messages = db.getMessagesForNotify();
-
-            Notifications notificator = new Notifications(context);
-            notificator.notifyNewMessage(messages, ID_NOTIFICATION);
-        } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
         }
     }
 
