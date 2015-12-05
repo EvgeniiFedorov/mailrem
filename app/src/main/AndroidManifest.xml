@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,25 +21,48 @@
             android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".components.SettingsActivity"
-                  android:label="@string/settings_label" >
+        <activity
+            android:name=".components.SettingsActivity"
+            android:label="@string/settings_label" >
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
+        <activity
+                android:name=".components.AccountListActivity" />
+
+        <activity
+                android:name=".components.LoginActivity" />
+
         <service
             android:name=".components.UpdateService"
             android:enabled="true"
             android:process=":updateProcess" />
 
-        <receiver android:name=".components.AutoStart" >
+        <service
+            android:name=".components.UpdateDataService"
+            android:exported="false" />
+
+        <service
+            android:name=".components.AuthenticationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator" />
+        </service>
+
+        <receiver
+            android:name=".components.AutoStart" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -46,9 +74,5 @@
         <receiver
                 android:name=".components.NotifyFromDB"/>
 
-        <service
-            android:name=".components.UpdateDataService"
-            android:exported="false" />
     </application>
-
 </manifest>

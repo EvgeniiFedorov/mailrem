@@ -6,7 +6,7 @@
     <item android:id="@+id/settings"
           android:title="@string/settings_title"
           app:showAsAction="never"/>
-    <item android:id="@+id/mails"
-          android:title="@string/mails_title"
-          app:showAsAction="ifRoom"/>
+    <item android:id="@+id/accounts"
+          android:title="@string/accounts_title"
+          app:showAsAction="never"/>
 </menu>

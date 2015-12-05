@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceScreen
-            android:key="notif"
+            android:key="notify"
             android:title="Notification"
             android:persistent="false">
 
@@ -45,7 +45,7 @@
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
                     android:defaultValue="1">
-        </ListPreference>
+            </ListPreference>
 
             <ListPreference
                     android:key="first_stage_frequency"
@@ -152,7 +152,7 @@
     </CheckBoxPreference>
 
     <Preference
-        android:title="List">
+            android:title="List">
     </Preference>
 
     <EditTextPreference

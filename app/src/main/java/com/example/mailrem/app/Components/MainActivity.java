@@ -20,10 +20,15 @@ public class MainActivity extends Activity {
 
     private final static int ID_NOTIFICATION = 2;
 
-    private final static String MAIL_HOST = "imap.mail.ru";
+    /*private final static String MAIL_HOST = "imap.mail.ru";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname1@mail.ru";
-    private final static String USER_PASSWORD = "testpassword";
+    private final static String USER_PASSWORD = "testpassword";*/
+    private final static String MAIL_HOST = "imap.gmail.com";
+    private final static int SERVER_PORT = 993;
+    private final static String USER_EMAIL = "ttestname1@gmail.com";
+    private final static String USER_PASSWORD = "testpassword1";
+
 
     private TextView textView;
 
@@ -87,6 +92,10 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.settings:
                 intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.accounts:
+                intent = new Intent(this, AccountListActivity.class);
                 startActivity(intent);
                 return true;
             default:

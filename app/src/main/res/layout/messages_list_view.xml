@@ -8,14 +8,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/message_view_background"
-            android:textSize="@dimen/abc_text_size_menu_material" >
-    </TextView>
+            android:textSize="@dimen/abc_text_size_menu_material"/>
 
     <TextView
             android:id="@+id/subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/message_view_background"
-            android:textSize="@dimen/abc_text_size_title_material" >
-    </TextView>
+            android:textSize="@dimen/abc_text_size_title_material"/>
+
 </LinearLayout>

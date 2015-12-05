@@ -5,7 +5,6 @@ import com.sun.mail.imap.IMAPFolder;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import java.io.IOException;
 import java.util.Date;
@@ -128,7 +127,9 @@ public final class MessageAnalyzer {
     private static String getBody(Message message) {
         Log.d(LOG_TAG, "message get body");
         /*try {
-            Log.d(LOG_TAG,"11");
+            Log.d(LOG_TAG,"111");
+            Object content = message.getContent();
+            Log.d(LOG_TAG,"112");
             if (message.isMimeType("text/*")) {
                 Log.d(LOG_TAG,"12");
                 return (String) message.getContent();
@@ -136,7 +137,7 @@ public final class MessageAnalyzer {
             Log.d(LOG_TAG,"13");
 
             if (message.isMimeType("multipart/*")) {
-                Log.d(LOG_TAG,"1");
+                Log.d(LOG_TAG, "1");
                 Multipart multipart = (Multipart) message.getContent();
                 Log.d(LOG_TAG,"2");
                 for (int partNumber = 0; partNumber < multipart.getCount(); ++partNumber) {

@@ -3,12 +3,14 @@ package com.example.mailrem.app.pojo;
 import android.os.StrictMode;
 import android.util.Log;
 import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
 
 import javax.mail.*;
 import javax.mail.search.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class MailAgent {
@@ -17,7 +19,7 @@ public class MailAgent {
 
     private final static String MAIL_STORE_PROTOCOL = "imaps";
 
-    private Store store;
+    private IMAPStore store;
 
     public MailAgent() {
         Log.d(LOG_TAG, "mail constructor");
@@ -38,9 +40,16 @@ public class MailAgent {
         properties.put("mail.store.protocol", MAIL_STORE_PROTOCOL);
 
         Session session = Session.getDefaultInstance(properties);
-        store = session.getStore();
+        store = (IMAPStore) session.getStore();
 
         store.connect(mailHost, serverPort, userMail, userPassword);
+
+        try {
+            HashMap<String, String> hashMap = new HashMap<>();
+            store.id(hashMap);
+        } catch (MessagingException e) {
+            Log.e(LOG_TAG, "Server doesn't support ID extension");
+        }
 
         Log.d(LOG_TAG, "mail connect OK");
     }

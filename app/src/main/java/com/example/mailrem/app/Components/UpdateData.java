@@ -11,29 +11,29 @@ import android.util.Log;
 import com.example.mailrem.app.pojo.MailAgent;
 import com.example.mailrem.app.pojo.MessageWrap;
 
-import java.util.List;
-
 public class UpdateData extends BroadcastReceiver {
 
     private final static String LOG_TAG = "mailrem_log";
 
-    private final static int ID_NOTIFICATION = 4;
 
     private final static String FILE_NAME = "setting";
-    private final static String COUNT = "Count";
-    private final static String COUNT_DEFAULT_VALUE = "0";
-    private final static int SPACED_REPETITION = 3 * 1000;
+    private final static String UID_FIELD = "uid";
+    private final static String UID_DEFAULT_VALUE = "0";
 
-    private final static String MAIL_HOST = "imap.mail.ru";
+    //private final static String MAIL_HOST = "imap.mail.ru";
+    //private final static int SERVER_PORT = 993;
+    //private final static String USER_EMAIL = "ttestname1@mail.ru";
+    //private final static String USER_PASSWORD = "testpassword";
+    private final static String MAIL_HOST = "imap.gmail.com";
     private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname1@mail.ru";
-    private final static String USER_PASSWORD = "testpassword";
+    private final static String USER_EMAIL = "ttestname1@gmail.com";
+    private final static String USER_PASSWORD = "testpassword1";
 
     private static volatile boolean stopUpdate = false;
 
     public static void startUpdateProcess(Context context, long interval) {
         Log.d(LOG_TAG, "start update process");
-        long uid = 0; //get uid from file
+        long uid = getUIDFromSettings(context);
 
         setNextUpdate(context, interval, uid);
     }
@@ -78,6 +78,7 @@ public class UpdateData extends BroadcastReceiver {
         if (stopUpdate) {
             stopUpdate = false;
             Log.d(LOG_TAG, "set next update delete");
+            setUIDToSettings(context, uid);
             return;
         }
 
@@ -118,16 +119,16 @@ public class UpdateData extends BroadcastReceiver {
         }
     }
 
-    private int getCountFromSettings(Context context) {
+    private static long getUIDFromSettings(Context context) {
         SharedPreferences sPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        String text = sPref.getString(COUNT, COUNT_DEFAULT_VALUE);
-        return Integer.parseInt(text);
+        String text = sPref.getString(UID_FIELD, UID_DEFAULT_VALUE);
+        return Long.parseLong(text);
     }
 
-    private void setCountInSettings(Context context, int count) {
+    private static void setUIDToSettings(Context context, long uid) {
         SharedPreferences sPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
-        editor.putString(COUNT, Integer.toString(count));
+        editor.putString(UID_FIELD, Long.toString(uid));
         editor.apply();
     }
 }

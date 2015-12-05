@@ -16,11 +16,7 @@ public class NotifyFromDB extends BroadcastReceiver {
 
     private final static String LOG_TAG = "mailrem_log";
 
-    private final static int ID_NOTIFICATION = 4;
-
-    private final static String FILE_NAME = "setting";
-    private final static String COUNT = "Count";
-    private final static String COUNT_DEFAULT_VALUE = "0";
+    private final static int ID_NOTIFICATION = 1;
 
     private static volatile boolean stopNotify = false;
 
@@ -93,18 +89,5 @@ public class NotifyFromDB extends BroadcastReceiver {
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         }
-    }
-
-    private int getCountFromSettings(Context context) {
-        SharedPreferences sPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        String text = sPref.getString(COUNT, COUNT_DEFAULT_VALUE);
-        return Integer.parseInt(text);
-    }
-
-    private void setCountInSettings(Context context, int count) {
-        SharedPreferences sPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sPref.edit();
-        editor.putString(COUNT, Integer.toString(count));
-        editor.apply();
     }
 }
