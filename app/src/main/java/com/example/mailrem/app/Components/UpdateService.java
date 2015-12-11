@@ -55,7 +55,7 @@ public class UpdateService extends Service {
                 dataBase.addMessage(messageWrap);
             }
 
-            List<String> messageTitles = new LinkedList<>();
+            List<String> messageTitles = new LinkedList<String>();
             List<MessageWrap> newMessagesWrap = dataBase.getAllMessages();
             for (MessageWrap messageWrap : newMessagesWrap) {
                 String title = messageWrap.getSubject();

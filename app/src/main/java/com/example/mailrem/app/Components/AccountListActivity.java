@@ -25,7 +25,11 @@ public class AccountListActivity extends Activity {
                     public void run(AccountManagerFuture<Bundle> future) {
                         try {
                             future.getResult();
-                        } catch (OperationCanceledException | IOException | AuthenticatorException e) {
+                        } catch (OperationCanceledException e) {
+                            AccountListActivity.this.finish();
+                        } catch (IOException e) {
+                            AccountListActivity.this.finish();
+                        } catch (AuthenticatorException e) {
                             AccountListActivity.this.finish();
                         }
                     }

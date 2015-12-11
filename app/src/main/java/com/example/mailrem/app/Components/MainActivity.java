@@ -20,14 +20,19 @@ public class MainActivity extends Activity {
 
     private final static int ID_NOTIFICATION = 2;
 
-    /*private final static String MAIL_HOST = "imap.mail.ru";
+    private final static String MAIL_HOST = "imap.mail.ru";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname1@mail.ru";
-    private final static String USER_PASSWORD = "testpassword";*/
-    private final static String MAIL_HOST = "imap.gmail.com";
+    private final static String USER_PASSWORD = "testpassword";
+    /*private final static String MAIL_HOST = "imap.gmail.com";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname1@gmail.com";
     private final static String USER_PASSWORD = "testpassword1";
+    private final static String MAIL_HOST = "imap.yandex.ru";
+    private final static int SERVER_PORT = 993;
+    private final static String USER_EMAIL = "ttestname2@yandex.ru";
+    private final static String USER_PASSWORD = "testpassword2";*/
+
 
 
     private TextView textView;
@@ -71,7 +76,8 @@ public class MainActivity extends Activity {
             MessageWrap[] messages = mailAgent.getUnreadMessages("INBOX");
             MessageWrap message = messages[0];
 
-            textView.setText(message.getSubject());
+            textView.setText(message.getBody());
+            //textView.setText(message.getSubject());
 
             mailAgent.disconnect();
         } catch (Exception e) {

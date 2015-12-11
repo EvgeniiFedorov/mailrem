@@ -44,12 +44,12 @@ public class MailAgent {
 
         store.connect(mailHost, serverPort, userMail, userPassword);
 
-        try {
-            HashMap<String, String> hashMap = new HashMap<>();
+        /*try {
+            HashMap<String, String> hashMap = new HashMap<String, String>();
             store.id(hashMap);
         } catch (MessagingException e) {
             Log.e(LOG_TAG, "Server doesn't support ID extension");
-        }
+        }*/
 
         Log.d(LOG_TAG, "mail connect OK");
     }

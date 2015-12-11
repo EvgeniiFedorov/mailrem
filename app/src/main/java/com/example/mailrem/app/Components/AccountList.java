@@ -26,7 +26,7 @@ public class AccountList extends ListFragment implements OnAccountsUpdateListene
         setEmptyText(getResources().getString(R.string.empty_account_list));
 
         accountManager = AccountManager.get(getActivity());
-        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1);
+        arrayAdapter = new ArrayAdapter<Account>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1);
         setListAdapter(arrayAdapter);
     }
 

@@ -11,6 +11,9 @@ import android.util.Log;
 import com.example.mailrem.app.pojo.MailAgent;
 import com.example.mailrem.app.pojo.MessageWrap;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class UpdateData extends BroadcastReceiver {
 
     private final static String LOG_TAG = "mailrem_log";
@@ -24,10 +27,14 @@ public class UpdateData extends BroadcastReceiver {
     //private final static int SERVER_PORT = 993;
     //private final static String USER_EMAIL = "ttestname1@mail.ru";
     //private final static String USER_PASSWORD = "testpassword";
-    private final static String MAIL_HOST = "imap.gmail.com";
+    //private final static String MAIL_HOST = "imap.gmail.com";
+    //private final static int SERVER_PORT = 993;
+    //private final static String USER_EMAIL = "ttestname1@gmail.com";
+    //private final static String USER_PASSWORD = "testpassword1";
+    private final static String MAIL_HOST = "imap.yandex.ru";
     private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname1@gmail.com";
-    private final static String USER_PASSWORD = "testpassword1";
+    private final static String USER_EMAIL = "ttestname2@yandex.ru";
+    private final static String USER_PASSWORD = "testpassword2";
 
     private static volatile boolean stopUpdate = false;
 
@@ -101,7 +108,7 @@ public class UpdateData extends BroadcastReceiver {
             MailAgent mailAgent = new MailAgent();
             mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
 
-            MessageWrap[] messagesWrap = mailAgent.getMessagesSinceUID(uid, "INBOX");
+            MessageWrap[] messagesWrap = mailAgent.getMessagesSinceUID(uid, "Inbox");
 
             mailAgent.disconnect();
 
@@ -115,6 +122,9 @@ public class UpdateData extends BroadcastReceiver {
             return nextUID;
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            Log.e(LOG_TAG, errors.toString());
             return uid;
         }
     }

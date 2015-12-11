@@ -123,7 +123,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public List<MessageWrap> getAllMessages() {
         Log.d(LOG_TAG, "get all message from db");
-        List<MessageWrap> messages = new LinkedList<>();
+        List<MessageWrap> messages = new LinkedList<MessageWrap>();
         String query = "SELECT * FROM " + TABLE_MAILS;
 
         SQLiteDatabase db = getReadableDatabase();
@@ -146,7 +146,7 @@ public class DataBase extends SQLiteOpenHelper {
     public List<MessageWrap> getMessagesForNotify() {
         Log.d(LOG_TAG, "get message from db for notify");
 
-        List<MessageWrap> messages = new LinkedList<>();
+        List<MessageWrap> messages = new LinkedList<MessageWrap>();
         SQLiteDatabase db = getReadableDatabase();
 
         int currentDate = dateToInt(new Date());
