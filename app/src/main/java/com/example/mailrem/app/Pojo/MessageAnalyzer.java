@@ -6,9 +6,6 @@ import com.sun.mail.imap.IMAPFolder;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Date;
 
 public final class MessageAnalyzer {
@@ -128,7 +125,7 @@ public final class MessageAnalyzer {
 
     private static String getBody(Message message) {
         Log.d(LOG_TAG, "message get body");
-        try {
+        /*try {
             Log.d(LOG_TAG,"111");
             Object content = message.getContent();
             Log.d(LOG_TAG,"112");
@@ -156,20 +153,20 @@ public final class MessageAnalyzer {
             }
             Log.d(LOG_TAG,"8");
             return TEXT_NOT_FOUND;
-        } /*catch (MessagingException e) {
+        } */ /*catch (MessagingException e) {
             Log.e(LOG_TAG, e.getMessage());
             return ERROR_STRING;
         } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage());
             return ERROR_STRING;
-        } */catch (Exception e) {
+        } */ /*catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             Log.e(LOG_TAG, errors.toString());
             return ERROR_STRING;
-        }
-        //return "text";
+        }*/
+        return "text";
     }
 
     private static boolean isNeedAnswer(Message message) {

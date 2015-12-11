@@ -2,6 +2,7 @@ package com.example.mailrem.app.components;
 
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -12,16 +13,19 @@ import java.util.List;
 
 public class ListMails extends ListFragment {
 
+    private MessageArrayAdapter adapter;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         setEmptyText(getResources().getString(R.string.empty_mail_list));
 
-        DataBase dataBase = new DataBase(getActivity());
+        MessagesDataBase dataBase = new MessagesDataBase(getActivity());
+
         List<MessageWrap> messages = dataBase.getAllMessages();
 
-        MessageArrayAdapter adapter = new MessageArrayAdapter(getActivity(), messages);
+        adapter = new MessageArrayAdapter(getActivity(), messages);
         setListAdapter(adapter);
     }
 

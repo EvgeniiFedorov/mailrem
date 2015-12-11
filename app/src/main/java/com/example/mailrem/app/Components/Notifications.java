@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.mailrem.app.components.activity.MainActivity;
 import com.example.mailrem.app.pojo.MessageWrap;
 import com.example.mailrem.app.R;
 
@@ -22,40 +23,6 @@ public class Notifications {
     public Notifications(Context context) {
         this.context = context;
     }
-
-    /*public void notifyNewMessage(List<String> messageTitles, int idNotification) {
-        Log.d(LOG_TAG, "send notification");
-
-        Intent intentToActivity = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentToActivity,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        inboxStyle.setBigContentTitle("Not answered message");
-
-        for (String title : messageTitles) {
-            inboxStyle.addLine(title);
-        }
-
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .addAction(0, "Later", pendingIntent)
-                .addAction(0, "Answer", pendingIntent)
-                .addAction(0, "Ignore", pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(String.valueOf(messageTitles.size()) +
-                        " not answered messages")
-                .setContentText("Content text")
-                .setContentIntent(pendingIntent)
-                .setTicker("Reminder of the answer")
-                .setStyle(inboxStyle)
-                .setAutoCancel(true)
-                .setVibrate(VIBRATION);
-
-        notificationManager.notify(idNotification, mBuilder.build());
-    }*/
 
     public void notifyNewMessage(List<MessageWrap> messages, int idNotification) {
         Log.d(LOG_TAG, "send notification");
@@ -75,9 +42,6 @@ public class Notifications {
         }
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .addAction(0, "Later", pendingIntent)
-                .addAction(0, "Answer", pendingIntent)
-                .addAction(0, "Ignore", pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(String.valueOf(messages.size()) +
                         " not answered messages")
@@ -85,6 +49,31 @@ public class Notifications {
                 .setContentIntent(pendingIntent)
                 .setTicker("Reminder of the answer")
                 .setStyle(inboxStyle)
+                .setAutoCancel(true)
+                .setVibrate(VIBRATION);
+
+        notificationManager.notify(idNotification, mBuilder.build());
+    }
+
+    public void notifyNewMessage(MessageWrap message, int idNotification) {
+        Log.d(LOG_TAG, "send notification");
+
+        Intent intentToActivity = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentToActivity,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                .addAction(0, "Later", pendingIntent)
+                .addAction(0, "Answer", pendingIntent)
+                .addAction(0, "Ignore", pendingIntent)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Not answered message")
+                .setContentText("Content text")
+                .setContentIntent(pendingIntent)
+                .setTicker("Reminder of the answer")
                 .setAutoCancel(true)
                 .setVibrate(VIBRATION);
 

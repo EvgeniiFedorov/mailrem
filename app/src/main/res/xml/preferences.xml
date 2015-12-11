@@ -104,6 +104,21 @@
                     android:defaultValue="1">
             </ListPreference>
         </PreferenceScreen>
+
+        <PreferenceScreen
+                android:key="forth_stage"
+                android:title="Forth stage (without notify)"
+                android:persistent="false">
+
+            <ListPreference
+                    android:key="forth_stage_duration"
+                    android:summary="Duration forth stage"
+                    android:title="Duration"
+                    android:entries="@array/stage_duration_entries"
+                    android:entryValues="@array/stage_duration_values"
+                    android:defaultValue="1">
+            </ListPreference>
+        </PreferenceScreen>
     </PreferenceScreen>
 
     <PreferenceScreen

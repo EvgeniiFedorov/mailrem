@@ -9,9 +9,7 @@ import javax.mail.*;
 import javax.mail.search.*;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Properties;
+import java.util.*;
 
 public class MailAgent {
 
@@ -54,7 +52,14 @@ public class MailAgent {
         Log.d(LOG_TAG, "mail connect OK");
     }
 
-    public void disconnect() throws MessagingException {
+    public void connect(Account account)
+            throws MessagingException, IOException {
+        connect(account.getHost(), account.getPort(),
+                account.getLogin(), account.getPassword());
+    }
+
+
+        public void disconnect() throws MessagingException {
         Log.d(LOG_TAG, "mail disconnect");
         if (store == null) {
             throw new MessagingException("Connection is not established");
@@ -64,7 +69,7 @@ public class MailAgent {
         store = null;
     }
 
-    public Folder[] getFolders() throws MessagingException {
+    private Folder[] getFolders() throws MessagingException {
         Log.d(LOG_TAG, "mail getFolders");
         return store.getDefaultFolder().list();
     }
@@ -92,6 +97,23 @@ public class MailAgent {
         Folder folder = getFolder(nameFolder);
 
         return getMessagesSinceUID(uid, folder);
+    }
+
+    public List<MessageWrap> getMessagesFromAllFoldersSinceUID(long uid)
+            throws MessagingException {
+
+        Log.d(LOG_TAG, "mail getMessagesFromAllFoldersSinceUID from folder");
+
+        List<MessageWrap> allMessages = new LinkedList<MessageWrap>();
+        Folder[] folders = getFolders();
+
+        for (Folder folder : folders) {
+            MessageWrap[] messages = getMessagesSinceUID(uid, folder);
+
+            Collections.addAll(allMessages, messages);
+        }
+
+        return allMessages;
     }
 
     public long[] getUIDForAnsweredMessages(Folder folder)

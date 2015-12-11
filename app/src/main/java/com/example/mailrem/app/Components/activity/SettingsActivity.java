@@ -1,7 +1,8 @@
-package com.example.mailrem.app.components;
+package com.example.mailrem.app.components.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import com.example.mailrem.app.components.SettingsFragment;
 
 public class SettingsActivity extends Activity {
 

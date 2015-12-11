@@ -1,13 +1,14 @@
-package com.example.mailrem.app.components;
+package com.example.mailrem.app.components.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.mailrem.app.components.MessagesDataBase;
+import com.example.mailrem.app.components.Notifications;
 import com.example.mailrem.app.pojo.MessageWrap;
 
 import java.util.List;
@@ -16,7 +17,8 @@ public class NotifyFromDB extends BroadcastReceiver {
 
     private final static String LOG_TAG = "mailrem_log";
 
-    private final static int ID_NOTIFICATION = 1;
+    private static int idNotification = 1;
+    private static final int MAX_ID = 10;
 
     private static volatile boolean stopNotify = false;
 
@@ -81,11 +83,28 @@ public class NotifyFromDB extends BroadcastReceiver {
 
     private void notifyFromDB(Context context) {
         try {
-            DataBase db = new DataBase(context);
-            List<MessageWrap> messages = db.getMessagesForNotify();
+            MessagesDataBase db = new MessagesDataBase(context);
+            List<MessageWrap> messages = db.getAndUpdateMessagesForNotify();
 
             Notifications notificator = new Notifications(context);
-            notificator.notifyNewMessage(messages, ID_NOTIFICATION);
+
+            if (messages.size() > 1) {
+                notificator.notifyNewMessage(messages, idNotification);
+
+                if (idNotification == MAX_ID) {
+                    idNotification = 1;
+                } else {
+                    idNotification++;
+                }
+            } else if (messages.size() == 1){
+                notificator.notifyNewMessage(messages.get(0), idNotification);
+
+                if (idNotification == MAX_ID) {
+                    idNotification = 1;
+                } else {
+                    idNotification++;
+                }
+            }
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         }

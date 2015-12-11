@@ -20,11 +20,25 @@
     <string name="account_already_exists">Account already exists</string>
     <string name="empty_account_list">No accounts</string>
     <string name="button_add_account">Add account</string>
+    <string name="button_delete_account">Delete account</string>
+
     <string name="login">Login</string>
     <string name="password">Password</string>
     <string name="login_empty">Login is empty</string>
     <string name="password_empty">Password is empty</string>
     <string name="cancel">Cancel</string>
     <string name="sign_in">Sign in</string>
+
+    <string name="host">IMAP host</string>
+    <string name="port">Port</string>
+    <string name="host_empty">Host is empty</string>
+    <string name="port_empty">Port is empty</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="port_cast_fail">Un correct number format</string>
+
+    <string name="default_info_text">Sign In</string>
+    <string name="authorization_fail">Authorization fail</string>
+    <string name="connection_progress">Connect …</string>
 
 </resources>

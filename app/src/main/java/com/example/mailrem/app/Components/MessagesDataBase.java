@@ -14,9 +14,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DataBase extends SQLiteOpenHelper {
+public class MessagesDataBase extends SQLiteOpenHelper {
 
     private final static String LOG_TAG = "mailrem_log";
+
+    private final static int START_STAGE = 0;
+    private final static int COUNT_STAGE = 4;
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MailBase";
@@ -30,10 +33,11 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String COLUMN_BODY = "body_field";
     private static final String COLUMN_STATUS = "status";
     private static final String COLUMN_SCHEDULE = "schedule";
+    private static final String COLUMN_END_STATUS = "end_status";
 
     private static final String[] COLUMNS_MAILS = {COLUMN_UID, COLUMN_FROM,
             COLUMN_TO, COLUMN_DATE, COLUMN_SUBJECT, COLUMN_BODY,
-            COLUMN_STATUS, COLUMN_SCHEDULE};
+            COLUMN_STATUS, COLUMN_SCHEDULE, COLUMN_END_STATUS};
 
     private static final String CREATE_TABLE_MAILS =
             "CREATE TABLE " + TABLE_MAILS + "(" +
@@ -44,13 +48,14 @@ public class DataBase extends SQLiteOpenHelper {
                     COLUMN_SUBJECT + " TEXT, " +
                     COLUMN_BODY + " TEXT, " +
                     COLUMN_STATUS + " INTEGER, " +
-                    COLUMN_SCHEDULE + " INTEGER " +
+                    COLUMN_SCHEDULE + " INTEGER, " +
+                    COLUMN_END_STATUS + " INTEGER " +
                     ")";
 
     private static final String DELETE_TABLE_MAILS =
             "DROP TABLE IF EXISTS " + TABLE_MAILS;
 
-    public DataBase(Context context) {
+    public MessagesDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -79,26 +84,29 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void addMessage(MessageWrap message) {
         Log.d(LOG_TAG, "add message in db");
-        SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = messageToContentValues(message);
 
-        int status = 0;
-        int scheduleTime = dateToInt(message.getDate()) + ScheduleManager.sheduleTime(status);
+        int status = START_STAGE;
+        int scheduleTime = dateToInt(new Date()) + ScheduleManager.frequencyStage(status);
+        int endStatusTime = dateToInt(new Date()) + ScheduleManager.durationStage(status);
+
         values.put(COLUMN_STATUS, status);
         values.put(COLUMN_SCHEDULE, scheduleTime);
+        values.put(COLUMN_END_STATUS, endStatusTime);
 
+        SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_MAILS, null, values);
         db.close();
     }
 
     public MessageWrap getMessage(long uid) {
         Log.d(LOG_TAG, "get message from db");
-        SQLiteDatabase db = getReadableDatabase();
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(uid)};
 
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_MAILS,
                 COLUMNS_MAILS,
@@ -143,16 +151,16 @@ public class DataBase extends SQLiteOpenHelper {
         return messages;
     }
 
-    public List<MessageWrap> getMessagesForNotify() {
+    public List<MessageWrap> getAndUpdateMessagesForNotify() {
         Log.d(LOG_TAG, "get message from db for notify");
 
         List<MessageWrap> messages = new LinkedList<MessageWrap>();
-        SQLiteDatabase db = getReadableDatabase();
 
         int currentDate = dateToInt(new Date());
         String selection = COLUMN_SCHEDULE + " <= ?";
         String[] selectionArgs = {String.valueOf(currentDate)};
 
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_MAILS,
                 COLUMNS_MAILS,
@@ -170,7 +178,14 @@ public class DataBase extends SQLiteOpenHelper {
 
         do {
             MessageWrap message = extractMessageFromCursor(cursor);
-            messages.add(message);
+            int status = cursor.getInt(6);
+            int endStatusTime = cursor.getInt(8);
+
+            if (status < COUNT_STAGE - 1) {
+                messages.add(message);
+            }
+
+            updateMessage(message, status, endStatusTime);
         } while (cursor.moveToNext());
 
         cursor.close();
@@ -178,29 +193,50 @@ public class DataBase extends SQLiteOpenHelper {
         return messages;
     }
 
-    public void deleteMessage(long uid) {
+    private void deleteMessage(long uid) {
         Log.d(LOG_TAG, "delete message from db");
-        SQLiteDatabase db = getReadableDatabase();
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(uid)};
 
+        SQLiteDatabase db = getReadableDatabase();
         db.delete(TABLE_MAILS, selection, selectionArgs);
         db.close();
     }
 
-    public void updateMessage(MessageWrap message, int lastScheduleTime, int status) {
+    private void updateMessage(MessageWrap message, int status, int endStatusTime) {
+
         Log.d(LOG_TAG, "update message from db");
-        SQLiteDatabase db = getReadableDatabase();
 
         ContentValues values = messageToContentValues(message);
-        int newScheduleTime = lastScheduleTime + ScheduleManager.sheduleTime(status);
-        values.put(COLUMN_STATUS, status);
+
+        int now = dateToInt(new Date());
+        int newStatus = status;
+        int newEndStatusTime = endStatusTime;
+        int newScheduleTime;
+
+        if (now > newEndStatusTime) {
+            status++;
+            newEndStatusTime = now + ScheduleManager.durationStage(status);
+        }
+
+        if (status < COUNT_STAGE - 1) {
+            newScheduleTime = now + ScheduleManager.frequencyStage(status);
+        } else if (status == COUNT_STAGE - 1) {
+            newScheduleTime = newEndStatusTime;
+        } else {
+            deleteMessage(message.getUID());
+            return;
+        }
+
+        values.put(COLUMN_STATUS, newStatus);
         values.put(COLUMN_SCHEDULE, newScheduleTime);
+        values.put(COLUMN_END_STATUS, newEndStatusTime);
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(message.getUID())};
 
+        SQLiteDatabase db = getReadableDatabase();
         db.update(TABLE_MAILS, values, selection, selectionArgs);
         db.close();
     }

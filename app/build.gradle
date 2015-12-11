@@ -42,5 +42,5 @@ dependencies {
 
 task appStart(type: Exec, dependsOn: 'installDebug') {
     executable = 'adb'
-    args = ['shell', 'am', 'start', '-n', 'com.example.mailrem.app/.components.MainActivity']
+    args = ['shell', 'am', 'start', '-n', 'com.example.mailrem.app/.components.activity.MainActivity']
 }

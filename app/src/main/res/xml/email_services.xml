@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <service name="mail.ru">
+        <host>imap.mail.ru</host>
+        <port>993</port>
+    </service>
+
+    <service name="yandex.ru">
+        <host>imap.yandex.ru</host>
+        <port>993</port>
+    </service>
+
+    <service name="gmail.com">
+        <host>imap.gmail.com</host>
+        <port>993</port>
+    </service>
+
+</data>

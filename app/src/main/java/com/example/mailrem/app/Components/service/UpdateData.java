@@ -1,4 +1,4 @@
-package com.example.mailrem.app.components;
+package com.example.mailrem.app.components.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.mailrem.app.components.AccountsDataBase;
+import com.example.mailrem.app.components.MessagesDataBase;
+import com.example.mailrem.app.pojo.Account;
 import com.example.mailrem.app.pojo.MailAgent;
 import com.example.mailrem.app.pojo.MessageWrap;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.List;
 
 public class UpdateData extends BroadcastReceiver {
 
@@ -23,18 +25,18 @@ public class UpdateData extends BroadcastReceiver {
     private final static String UID_FIELD = "uid";
     private final static String UID_DEFAULT_VALUE = "0";
 
-    //private final static String MAIL_HOST = "imap.mail.ru";
-    //private final static int SERVER_PORT = 993;
-    //private final static String USER_EMAIL = "ttestname1@mail.ru";
-    //private final static String USER_PASSWORD = "testpassword";
-    //private final static String MAIL_HOST = "imap.gmail.com";
-    //private final static int SERVER_PORT = 993;
-    //private final static String USER_EMAIL = "ttestname1@gmail.com";
-    //private final static String USER_PASSWORD = "testpassword1";
+    /*private final static String MAIL_HOST = "imap.mail.ru";
+    private final static int SERVER_PORT = 993;
+    private final static String USER_EMAIL = "ttestname1@mail.ru";
+    private final static String USER_PASSWORD = "testpassword";
+    private final static String MAIL_HOST = "imap.gmail.com";
+    private final static int SERVER_PORT = 993;
+    private final static String USER_EMAIL = "ttestname1@gmail.com";
+    private final static String USER_PASSWORD = "testpassword1";
     private final static String MAIL_HOST = "imap.yandex.ru";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname2@yandex.ru";
-    private final static String USER_PASSWORD = "testpassword2";
+    private final static String USER_PASSWORD = "testpassword2";*/
 
     private static volatile boolean stopUpdate = false;
 
@@ -106,25 +108,27 @@ public class UpdateData extends BroadcastReceiver {
             long nextUID = uid;
 
             MailAgent mailAgent = new MailAgent();
-            mailAgent.connect(MAIL_HOST, SERVER_PORT, USER_EMAIL, USER_PASSWORD);
 
-            MessageWrap[] messagesWrap = mailAgent.getMessagesSinceUID(uid, "Inbox");
+            AccountsDataBase accountsDataBase = new AccountsDataBase(context);
+            List<Account> accounts = accountsDataBase.getAllAccounts();
+            MessagesDataBase messagesDataBase = new MessagesDataBase(context);
 
-            mailAgent.disconnect();
+            for (Account account : accounts) {
+                mailAgent.connect(account);
+                List<MessageWrap> messagesWrap = mailAgent.getMessagesFromAllFoldersSinceUID(uid);
+                mailAgent.disconnect();
 
-            DataBase dataBase = new DataBase(context);
-            for (MessageWrap messageWrap : messagesWrap) {
-                dataBase.addIfNotExistMessage(messageWrap);
-                if (messageWrap.getUID() >= nextUID) {
-                    nextUID = messageWrap.getUID() + 1;
+                for (MessageWrap messageWrap : messagesWrap) {
+                    messagesDataBase.addIfNotExistMessage(messageWrap);
+                    if (messageWrap.getUID() >= nextUID) {
+                        nextUID = messageWrap.getUID() + 1;
+                    }
                 }
             }
+
             return nextUID;
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
-            Log.e(LOG_TAG, errors.toString());
             return uid;
         }
     }

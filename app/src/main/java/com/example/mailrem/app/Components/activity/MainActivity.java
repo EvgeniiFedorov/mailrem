@@ -1,4 +1,4 @@
-package com.example.mailrem.app.components;
+package com.example.mailrem.app.components.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.mailrem.app.components.Notifications;
+import com.example.mailrem.app.components.service.NotifyFromDB;
+import com.example.mailrem.app.components.service.UpdateData;
 import com.example.mailrem.app.pojo.MailAgent;
 import com.example.mailrem.app.pojo.MessageWrap;
 import com.example.mailrem.app.R;
@@ -18,22 +21,12 @@ public class MainActivity extends Activity {
 
     private final static String LOG_TAG = "mailrem_log";
 
-    private final static int ID_NOTIFICATION = 2;
+    private final static int ID_NOTIFICATION = 3;
 
     private final static String MAIL_HOST = "imap.mail.ru";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname1@mail.ru";
     private final static String USER_PASSWORD = "testpassword";
-    /*private final static String MAIL_HOST = "imap.gmail.com";
-    private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname1@gmail.com";
-    private final static String USER_PASSWORD = "testpassword1";
-    private final static String MAIL_HOST = "imap.yandex.ru";
-    private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname2@yandex.ru";
-    private final static String USER_PASSWORD = "testpassword2";*/
-
-
 
     private TextView textView;
 
