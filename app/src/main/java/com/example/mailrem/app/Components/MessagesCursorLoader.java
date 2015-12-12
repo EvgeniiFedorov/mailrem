@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 
-class AccountsCursorLoader extends CursorLoader {
+class MessagesCursorLoader extends CursorLoader {
 
-    private final AccountsDataBase dataBase;
+    private final MessagesDataBase dataBase;
 
-    public AccountsCursorLoader(Context context, AccountsDataBase dataBase) {
+    public MessagesCursorLoader(Context context, MessagesDataBase dataBase) {
         super(context);
         this.dataBase = dataBase;
     }

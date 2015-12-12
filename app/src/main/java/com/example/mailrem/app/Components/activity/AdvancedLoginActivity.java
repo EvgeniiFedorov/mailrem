@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import com.example.mailrem.app.R;
 
-public class AdvancedLoginActivity extends Activity{
+public class AdvancedLoginActivity extends Activity {
 
     private static final String HOST = "host";
     private static final String PORT = "port";
@@ -48,6 +48,8 @@ public class AdvancedLoginActivity extends Activity{
     }
 
     public void onClickButtonPrev(View v) {
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
         finish();
     }
 }

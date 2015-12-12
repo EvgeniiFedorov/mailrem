@@ -18,25 +18,11 @@ import java.util.List;
 
 public class UpdateData extends BroadcastReceiver {
 
-    private final static String LOG_TAG = "mailrem_log";
+    private static final String LOG_TAG = "mailrem_log";
 
-
-    private final static String FILE_NAME = "setting";
-    private final static String UID_FIELD = "uid";
-    private final static String UID_DEFAULT_VALUE = "0";
-
-    /*private final static String MAIL_HOST = "imap.mail.ru";
-    private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname1@mail.ru";
-    private final static String USER_PASSWORD = "testpassword";
-    private final static String MAIL_HOST = "imap.gmail.com";
-    private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname1@gmail.com";
-    private final static String USER_PASSWORD = "testpassword1";
-    private final static String MAIL_HOST = "imap.yandex.ru";
-    private final static int SERVER_PORT = 993;
-    private final static String USER_EMAIL = "ttestname2@yandex.ru";
-    private final static String USER_PASSWORD = "testpassword2";*/
+    private static final String FILE_NAME = "setting";
+    private static final String UID_FIELD = "uid";
+    private static final String UID_DEFAULT_VALUE = "0";
 
     private static volatile boolean stopUpdate = false;
 

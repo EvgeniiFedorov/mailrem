@@ -16,15 +16,16 @@ import java.util.List;
 
 public class MessagesDataBase extends SQLiteOpenHelper {
 
-    private final static String LOG_TAG = "mailrem_log";
+    private static final String LOG_TAG = "mailrem_log";
 
-    private final static int START_STAGE = 0;
-    private final static int COUNT_STAGE = 4;
+    private static final int START_STAGE = 0;
+    private static final int COUNT_STAGE = 4;
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MailBase";
 
     private static final String TABLE_MAILS = "Mails";
+    private static final String COLUMN_ID = "_id";
     private static final String COLUMN_UID = "uid";
     private static final String COLUMN_FROM = "from_field";
     private static final String COLUMN_TO = "to_field";
@@ -35,13 +36,14 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     private static final String COLUMN_SCHEDULE = "schedule";
     private static final String COLUMN_END_STATUS = "end_status";
 
-    private static final String[] COLUMNS_MAILS = {COLUMN_UID, COLUMN_FROM,
+    private static final String[] COLUMNS_MAILS = {COLUMN_ID, COLUMN_UID, COLUMN_FROM,
             COLUMN_TO, COLUMN_DATE, COLUMN_SUBJECT, COLUMN_BODY,
             COLUMN_STATUS, COLUMN_SCHEDULE, COLUMN_END_STATUS};
 
     private static final String CREATE_TABLE_MAILS =
             "CREATE TABLE " + TABLE_MAILS + "(" +
-                    COLUMN_UID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_UID + " INTEGER UNIQUE, " +
                     COLUMN_FROM + " TEXT, " +
                     COLUMN_TO + " TEXT, " +
                     COLUMN_DATE + " INTEGER, " +
@@ -56,6 +58,8 @@ public class MessagesDataBase extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + TABLE_MAILS;
 
     private final Context context;
+    private SQLiteDatabase databaseForCursor;
+
 
     public MessagesDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -75,12 +79,26 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void open() {
+        databaseForCursor = getWritableDatabase();
+    }
+
+    public void close() {
+        databaseForCursor.close();
+    }
+
+    public Cursor getCursor() {
+        Log.d(LOG_TAG, "get cursor all message from db");
+        String query = "SELECT * FROM " + TABLE_MAILS;
+
+        return databaseForCursor.rawQuery(query, null);
+    }
+
     public void addIfNotExistMessage(MessageWrap message) {
         Log.d(LOG_TAG, "add message if not exist db");
         if (getMessage(message.getUID()) == null) {
             addMessage(message);
-        }
-        else {
+        } else {
             Log.i(LOG_TAG, "message already exists");
         }
     }
@@ -182,8 +200,8 @@ public class MessagesDataBase extends SQLiteOpenHelper {
 
         do {
             MessageWrap message = extractMessageFromCursor(cursor);
-            int status = cursor.getInt(6);
-            int endStatusTime = cursor.getInt(8);
+            int status = cursor.getInt(7);
+            int endStatusTime = cursor.getInt(9);
 
             if (status < COUNT_STAGE - 1) {
                 messages.add(message);
@@ -249,12 +267,12 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     private MessageWrap extractMessageFromCursor(Cursor cursor) {
         MessageWrap message = new MessageWrap();
 
-        message.setUID(cursor.getLong(0));
-        message.setFrom(cursor.getString(1));
-        message.setTo(cursor.getString(2));
-        message.setDate(intToDate(cursor.getInt(3)));
-        message.setSubject(cursor.getString(4));
-        message.setBody(cursor.getString(5));
+        message.setUID(cursor.getLong(1));
+        message.setFrom(cursor.getString(2));
+        message.setTo(cursor.getString(3));
+        message.setDate(intToDate(cursor.getInt(4)));
+        message.setSubject(cursor.getString(5));
+        message.setBody(cursor.getString(6));
 
         return message;
     }

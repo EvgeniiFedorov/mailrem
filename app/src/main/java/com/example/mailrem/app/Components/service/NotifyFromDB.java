@@ -15,10 +15,7 @@ import java.util.List;
 
 public class NotifyFromDB extends BroadcastReceiver {
 
-    private final static String LOG_TAG = "mailrem_log";
-
-    private static int idNotification = 1;
-    private static final int MAX_ID = 10;
+    private static final String LOG_TAG = "mailrem_log";
 
     private static volatile boolean stopNotify = false;
 
@@ -86,25 +83,10 @@ public class NotifyFromDB extends BroadcastReceiver {
             MessagesDataBase db = new MessagesDataBase(context);
             List<MessageWrap> messages = db.getAndUpdateMessagesForNotify();
 
-            Notifications notificator = new Notifications(context);
+            Notifications notifier = new Notifications(context);
 
-            if (messages.size() > 1) {
-                notificator.notifyNewMessage(messages, idNotification);
+            notifier.notifyNewMessage(messages);
 
-                if (idNotification == MAX_ID) {
-                    idNotification = 1;
-                } else {
-                    idNotification++;
-                }
-            } else if (messages.size() == 1){
-                notificator.notifyNewMessage(messages.get(0), idNotification);
-
-                if (idNotification == MAX_ID) {
-                    idNotification = 1;
-                } else {
-                    idNotification++;
-                }
-            }
         } catch (Exception e) {
             Log.e(LOG_TAG, e.getMessage());
         }

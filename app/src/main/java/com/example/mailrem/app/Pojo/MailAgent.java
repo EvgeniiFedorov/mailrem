@@ -13,9 +13,9 @@ import java.util.*;
 
 public class MailAgent {
 
-    private final static String LOG_TAG = "mailrem_log";
+    private static final String LOG_TAG = "mailrem_log";
 
-    private final static String MAIL_STORE_PROTOCOL = "imaps";
+    private static final String MAIL_STORE_PROTOCOL = "imaps";
 
     private IMAPStore store;
 

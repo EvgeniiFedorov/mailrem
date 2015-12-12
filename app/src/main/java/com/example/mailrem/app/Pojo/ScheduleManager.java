@@ -9,7 +9,6 @@ public class ScheduleManager {
     private static final String DURATION_STAGE = "stage_duration_";
     private static final String FREQUENCY_STAGE = "stage_frequency_";
 
-
     private final SharedPreferences sharedPreferences;
 
     public ScheduleManager(Context context) {

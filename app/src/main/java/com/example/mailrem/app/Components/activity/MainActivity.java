@@ -19,14 +19,27 @@ import com.example.mailrem.app.R;
 
 public class MainActivity extends Activity {
 
-    private final static String LOG_TAG = "mailrem_log";
+    private static final String LOG_TAG = "mailrem_log";
 
-    private final static int ID_NOTIFICATION = 3;
+    private static final int ID_NOTIFICATION = 3;
 
-    private final static String MAIL_HOST = "imap.mail.ru";
+    private static final String MAIL_HOST = "imap.mail.ru";
+    private static final int SERVER_PORT = 993;
+    private static final String USER_EMAIL = "ttestname1@mail.ru";
+    private static final String USER_PASSWORD = "testpassword";
+    /*private final static String MAIL_HOST = "imap.mail.ru";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname1@mail.ru";
     private final static String USER_PASSWORD = "testpassword";
+    private final static String MAIL_HOST = "imap.gmail.com";
+    private final static int SERVER_PORT = 993;
+    private final static String USER_EMAIL = "ttestname1@gmail.com";
+    private final static String USER_PASSWORD = "testpassword1";
+    private final static String MAIL_HOST = "imap.yandex.ru";
+    private final static int SERVER_PORT = 993;
+    private final static String USER_EMAIL = "ttestname2@yandex.ru";
+    private final static String USER_PASSWORD = "testpassword2";*/
+
 
     private TextView textView;
 

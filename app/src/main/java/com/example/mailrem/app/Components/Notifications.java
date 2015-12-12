@@ -24,6 +24,10 @@ public class Notifications {
         this.context = context;
     }
 
+    public void notifyNewMessage(List<MessageWrap> messages) {
+        notifyNewMessage(messages, 1);
+    }
+
     public void notifyNewMessage(List<MessageWrap> messages, int idNotification) {
         Log.d(LOG_TAG, "send notification");
 

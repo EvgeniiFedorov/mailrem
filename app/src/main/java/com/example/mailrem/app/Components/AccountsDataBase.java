@@ -13,7 +13,7 @@ import java.util.List;
 
 public class AccountsDataBase extends SQLiteOpenHelper {
 
-    private final static String LOG_TAG = "mailrem_log";
+    private static final String LOG_TAG = "mailrem_log";
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "AccountsBase";
@@ -40,7 +40,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_ACCOUNTS =
             "DROP TABLE IF EXISTS " + TABLE_ACCOUNTS;
 
-    SQLiteDatabase databaseForCursor;
+    private SQLiteDatabase databaseForCursor;
 
     public AccountsDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -60,17 +60,53 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     }
 
     public void open() {
-        if (databaseForCursor == null) {
-            databaseForCursor = getWritableDatabase();
-        } else {
-        }
+        databaseForCursor = getWritableDatabase();
     }
 
     public void close() {
-        if (databaseForCursor != null && databaseForCursor.isOpen()) {
-            databaseForCursor.close();
-        } else {
+        databaseForCursor.close();
+    }
+
+    public Cursor getCursor() {
+        Log.d(LOG_TAG, "get cursor accounts from db");
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
+
+        return databaseForCursor.rawQuery(query, null);
+    }
+
+    public void deleteAccount(long id) {
+        Log.d(LOG_TAG, "delete account from db");
+
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        databaseForCursor.delete(TABLE_ACCOUNTS, selection, selectionArgs);
+    }
+
+    public String getLoginById(long id) {
+
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        Cursor cursor = databaseForCursor.query(
+                TABLE_ACCOUNTS,
+                new String[] {COLUMN_LOGIN},
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null,
+                null
+        );
+
+        if (!cursor.moveToFirst()) {
+            return null;
         }
+
+        String login = cursor.getString(0);
+
+        cursor.close();
+        return login;
     }
 
     public void addIfNotExistAccount(Account account) {
@@ -122,6 +158,20 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         return account;
     }
 
+    public void updateAccountByLogin(Account account) {
+        Log.d(LOG_TAG, "update account by login from db");
+
+        ContentValues values = accountToContentValues(account);
+
+        String selection = COLUMN_LOGIN + " = ?";
+        String[] selectionArgs = {account.getLogin()};
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
+        db.close();
+    }
+
     public List<Account> getAllAccounts() {
         Log.d(LOG_TAG, "get all accounts from db");
         List<Account> accounts = new LinkedList<Account>();
@@ -142,33 +192,6 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return accounts;
-    }
-
-    public Cursor getCursor() {
-        Log.d(LOG_TAG, "get cursor accounts from db");
-        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
-
-        return  databaseForCursor.rawQuery(query, null);
-    }
-
-    public void deleteAccount(long id) {
-        Log.d(LOG_TAG, "delete account from db");
-
-        String selection = COLUMN_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-
-        databaseForCursor.delete(TABLE_ACCOUNTS, selection, selectionArgs);
-    }
-
-    public void updateAccountByLogin (Account account) {
-        Log.d(LOG_TAG, "update account by login from db");
-
-        ContentValues values = accountToContentValues(account);
-
-        String selection = COLUMN_LOGIN + " = ?";
-        String[] selectionArgs = {account.getLogin()};
-
-        databaseForCursor.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
     }
 
     private Account extractAccountFromCursor(Cursor cursor) {

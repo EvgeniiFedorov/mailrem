@@ -60,9 +60,4 @@ public class MessageWrap {
     public void setBody(String body) {
         this.body = body;
     }
-
-    @Override
-    public String toString() {
-        return subject;
-    }
 }

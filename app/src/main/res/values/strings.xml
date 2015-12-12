@@ -26,6 +26,7 @@
     <string name="password">Password</string>
     <string name="login_empty">Login is empty</string>
     <string name="password_empty">Password is empty</string>
+    <string name="enter_host_and_port">Do not try find host and port</string>
     <string name="cancel">Cancel</string>
     <string name="sign_in">Sign in</string>
 
