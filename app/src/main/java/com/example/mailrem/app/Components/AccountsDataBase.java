@@ -19,17 +19,19 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "AccountsBase";
 
     private static final String TABLE_ACCOUNTS = "Accounts";
+    private static final String COLUMN_ID = "_id";
     private static final String COLUMN_LOGIN = "login";
     private static final String COLUMN_PASSWORD = "password";
     private static final String COLUMN_HOST = "host";
     private static final String COLUMN_PORT = "port";
 
-    private static final String[] COLUMNS_ACCOUNTS = {COLUMN_LOGIN,
+    private static final String[] COLUMNS_ACCOUNTS = {COLUMN_ID, COLUMN_LOGIN,
             COLUMN_PASSWORD, COLUMN_HOST, COLUMN_PORT};
 
     private static final String CREATE_TABLE_ACCOUNTS =
             "CREATE TABLE " + TABLE_ACCOUNTS + "(" +
-                    COLUMN_LOGIN + " TEXT PRIMARY KEY, " +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_LOGIN + " TEXT UNIQUE, " +
                     COLUMN_PASSWORD + " TEXT, " +
                     COLUMN_HOST + " TEXT, " +
                     COLUMN_PORT + " INTEGER " +
@@ -37,6 +39,8 @@ public class AccountsDataBase extends SQLiteOpenHelper {
 
     private static final String DELETE_TABLE_ACCOUNTS =
             "DROP TABLE IF EXISTS " + TABLE_ACCOUNTS;
+
+    SQLiteDatabase databaseForCursor;
 
     public AccountsDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -55,6 +59,20 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void open() {
+        if (databaseForCursor == null) {
+            databaseForCursor = getWritableDatabase();
+        } else {
+        }
+    }
+
+    public void close() {
+        if (databaseForCursor != null && databaseForCursor.isOpen()) {
+            databaseForCursor.close();
+        } else {
+        }
+    }
+
     public void addIfNotExistAccount(Account account) {
         Log.d(LOG_TAG, "add account if not exist db");
         if (getAccount(account.getLogin()) == null) {
@@ -66,9 +84,10 @@ public class AccountsDataBase extends SQLiteOpenHelper {
 
     public void addAccount(Account account) {
         Log.d(LOG_TAG, "add account in db");
-        SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = accountToContentValues(account);
+
+        SQLiteDatabase db = getWritableDatabase();
 
         db.insert(TABLE_ACCOUNTS, null, values);
         db.close();
@@ -76,11 +95,11 @@ public class AccountsDataBase extends SQLiteOpenHelper {
 
     public Account getAccount(String login) {
         Log.d(LOG_TAG, "get account from db");
-        SQLiteDatabase db = getReadableDatabase();
 
         String selection = COLUMN_LOGIN + " = ?";
         String[] selectionArgs = {login};
 
+        SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_ACCOUNTS,
                 COLUMNS_ACCOUNTS,
@@ -125,36 +144,38 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         return accounts;
     }
 
-    public void deleteAccount(String login) {
+    public Cursor getCursor() {
+        Log.d(LOG_TAG, "get cursor accounts from db");
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
+
+        return  databaseForCursor.rawQuery(query, null);
+    }
+
+    public void deleteAccount(long id) {
         Log.d(LOG_TAG, "delete account from db");
-        SQLiteDatabase db = getReadableDatabase();
 
-        String selection = COLUMN_LOGIN + " = ?";
-        String[] selectionArgs = {String.valueOf(login)};
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
 
-        db.delete(TABLE_ACCOUNTS, selection, selectionArgs);
-        db.close();
+        databaseForCursor.delete(TABLE_ACCOUNTS, selection, selectionArgs);
     }
 
     public void updateAccountByLogin (Account account) {
         Log.d(LOG_TAG, "update account by login from db");
-        SQLiteDatabase db = getReadableDatabase();
 
         ContentValues values = accountToContentValues(account);
 
         String selection = COLUMN_LOGIN + " = ?";
         String[] selectionArgs = {account.getLogin()};
 
-        db.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
-        db.close();
+        databaseForCursor.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
     }
 
     private Account extractAccountFromCursor(Cursor cursor) {
-        Account account = new Account(cursor.getString(0),
-                cursor.getString(1), cursor.getString(2),
-                cursor.getInt(3));
 
-        return account;
+        return new Account(cursor.getString(1),
+                cursor.getString(2), cursor.getString(3),
+                cursor.getInt(4));
     }
 
     private ContentValues accountToContentValues(Account account) {

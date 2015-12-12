@@ -41,4 +41,7 @@
     <string name="authorization_fail">Authorization fail</string>
     <string name="connection_progress">connect …</string>
 
+    <string name="context_account_change">Change</string>
+    <string name="context_account_delete">Delete</string>
+
 </resources>

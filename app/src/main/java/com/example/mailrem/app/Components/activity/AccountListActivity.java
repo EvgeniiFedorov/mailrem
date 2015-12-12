@@ -17,7 +17,7 @@ public class AccountListActivity extends Activity {
 
     public void onClickAddAccount(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     public void onClickCancel(View view) {
