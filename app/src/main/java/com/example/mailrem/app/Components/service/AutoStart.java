@@ -10,7 +10,7 @@ public class AutoStart extends BroadcastReceiver {
 
     private final static String LOG_TAG = "mailrem_log";
 
-    private final static int ID_NOTIFICATION = 2;
+    private final static int ID_NOTIFICATION = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {

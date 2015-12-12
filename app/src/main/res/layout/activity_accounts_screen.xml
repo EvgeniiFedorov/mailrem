@@ -22,6 +22,17 @@
             android:showDividers="middle">
 
         <Button
+                android:id="@+id/button_cancel_from_accounts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="@string/button_cancel_account"
+                android:layout_weight="1"
+                android:textColor="#00b0e4"
+                android:background="#458626"
+                android:onClick="onClickCancel"/>
+
+        <Button
                 android:id="@+id/button_add_account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,18 +42,6 @@
                 android:textColor="#00b0e4"
                 android:background="#458626"
                 android:onClick="onClickAddAccount"/>
-
-
-        <Button
-                android:id="@+id/button_delete_account"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="?android:attr/buttonBarButtonStyle"
-                android:text="@string/button_delete_account"
-                android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
-                android:onClick="onClickDeleteAccount"/>
 
     </LinearLayout>
 

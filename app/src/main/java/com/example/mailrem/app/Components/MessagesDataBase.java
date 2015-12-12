@@ -55,8 +55,11 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_MAILS =
             "DROP TABLE IF EXISTS " + TABLE_MAILS;
 
+    private final Context context;
+
     public MessagesDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -86,10 +89,11 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         Log.d(LOG_TAG, "add message in db");
 
         ContentValues values = messageToContentValues(message);
+        ScheduleManager scheduleManager = new ScheduleManager(context);
 
         int status = START_STAGE;
-        int scheduleTime = dateToInt(new Date()) + ScheduleManager.frequencyStage(status);
-        int endStatusTime = dateToInt(new Date()) + ScheduleManager.durationStage(status);
+        int scheduleTime = dateToInt(new Date()) + scheduleManager.frequencyStage(status);
+        int endStatusTime = dateToInt(new Date()) + scheduleManager.durationStage(status);
 
         values.put(COLUMN_STATUS, status);
         values.put(COLUMN_SCHEDULE, scheduleTime);
@@ -209,6 +213,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         Log.d(LOG_TAG, "update message from db");
 
         ContentValues values = messageToContentValues(message);
+        ScheduleManager scheduleManager = new ScheduleManager(context);
 
         int now = dateToInt(new Date());
         int newStatus = status;
@@ -217,11 +222,11 @@ public class MessagesDataBase extends SQLiteOpenHelper {
 
         if (now > newEndStatusTime) {
             status++;
-            newEndStatusTime = now + ScheduleManager.durationStage(status);
+            newEndStatusTime = now + scheduleManager.durationStage(status);
         }
 
         if (status < COUNT_STAGE - 1) {
-            newScheduleTime = now + ScheduleManager.frequencyStage(status);
+            newScheduleTime = now + scheduleManager.frequencyStage(status);
         } else if (status == COUNT_STAGE - 1) {
             newScheduleTime = newEndStatusTime;
         } else {

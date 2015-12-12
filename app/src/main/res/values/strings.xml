@@ -20,7 +20,7 @@
     <string name="account_already_exists">Account already exists</string>
     <string name="empty_account_list">No accounts</string>
     <string name="button_add_account">Add account</string>
-    <string name="button_delete_account">Delete account</string>
+    <string name="button_cancel_account">Back</string>
 
     <string name="login">Login</string>
     <string name="password">Password</string>
@@ -39,6 +39,6 @@
 
     <string name="default_info_text">Sign In</string>
     <string name="authorization_fail">Authorization fail</string>
-    <string name="connection_progress">Connect …</string>
+    <string name="connection_progress">connect …</string>
 
 </resources>

@@ -81,7 +81,8 @@ public class LoginActivity extends Activity implements OnTaskCompleted{
         checkAccount.execute(account);
         progressBar.setVisibility(View.VISIBLE);
         textInfo.setBackgroundColor(Color.GRAY);
-        textInfo.setText(getString(R.string.connection_progress));
+        textInfo.setText(account.getHost() + ":" + account.getPort() + "\n" +
+                getString(R.string.connection_progress));
     }
 
     @Override

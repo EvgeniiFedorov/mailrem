@@ -34,89 +34,89 @@
             android:persistent="false">
 
         <PreferenceScreen
-                android:key="first_stage"
+                android:key="stage_0"
                 android:title="First stage"
                 android:persistent="false">
 
             <ListPreference
-                    android:key="first_stage_duration"
+                    android:key="stage_duration_0"
                     android:summary="Duration first stage"
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="1">
+                    android:defaultValue="24">
             </ListPreference>
 
             <ListPreference
-                    android:key="first_stage_frequency"
+                    android:key="stage_frequency_0"
                     android:summary="Frequency of reminder for first stage"
                     android:title="Frequency"
                     android:entries="@array/stage_frequency_entries"
                     android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="1">
+                    android:defaultValue="60">
             </ListPreference>
         </PreferenceScreen>
 
         <PreferenceScreen
-                android:key="second_stage"
+                android:key="stage_1"
                 android:title="Second stage"
                 android:persistent="false">
 
             <ListPreference
-                    android:key="second_stage_duration"
+                    android:key="stage_duration_1"
                     android:summary="Duration second stage"
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="1">
+                    android:defaultValue="24">
             </ListPreference>
 
             <ListPreference
-                    android:key="second_stage_frequency"
+                    android:key="stage_frequency_1"
                     android:summary="Frequency of reminder for second stage"
                     android:title="Frequency"
                     android:entries="@array/stage_frequency_entries"
                     android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="1">
+                    android:defaultValue="60">
             </ListPreference>
         </PreferenceScreen>
 
         <PreferenceScreen
-                android:key="third_stage"
+                android:key="stage_2"
                 android:title="Third stage"
                 android:persistent="false">
 
             <ListPreference
-                    android:key="third_stage_duration"
+                    android:key="stage_duration_2"
                     android:summary="Duration third stage"
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="1">
+                    android:defaultValue="24">
             </ListPreference>
 
             <ListPreference
-                    android:key="third_stage_frequency"
+                    android:key="stage_frequency_2"
                     android:summary="Frequency of reminder for third stage"
                     android:title="Frequency"
                     android:entries="@array/stage_frequency_entries"
                     android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="1">
+                    android:defaultValue="60">
             </ListPreference>
         </PreferenceScreen>
 
         <PreferenceScreen
-                android:key="forth_stage"
+                android:key="stage_3"
                 android:title="Forth stage (without notify)"
                 android:persistent="false">
 
             <ListPreference
-                    android:key="forth_stage_duration"
+                    android:key="stage_duration_3"
                     android:summary="Duration forth stage"
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="1">
+                    android:defaultValue="24">
             </ListPreference>
         </PreferenceScreen>
     </PreferenceScreen>
@@ -146,7 +146,7 @@
                 android:title="Frequency"
                 android:entries="@array/update_frequency_entries"
                 android:entryValues="@array/update_frequency_values"
-                android:defaultValue="1">
+                android:defaultValue="5">
         </ListPreference>
 
         <ListPreference
@@ -155,7 +155,7 @@
                 android:title="Interval browsing"
                 android:entries="@array/update_interval_entries"
                 android:entryValues="@array/update_interval_values"
-                android:defaultValue="1">
+                android:defaultValue="72">
         </ListPreference>
     </PreferenceScreen>
 

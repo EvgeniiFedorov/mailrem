@@ -15,12 +15,12 @@ public class AccountListActivity extends Activity {
         setContentView(R.layout.activity_accounts_screen);
     }
 
-    public void onClickAddAccount(View v) {
+    public void onClickAddAccount(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
-    public void onClickDeleteAccount(View v) {
-        //start delete activity
+    public void onClickCancel(View view) {
+        finish();
     }
 }
