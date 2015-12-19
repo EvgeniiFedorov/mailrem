@@ -77,16 +77,12 @@ public class ProcessesManager {
     private static boolean checkStateUpdate(Context context) {
         Log.d(Constants.LOG_TAG, "ProcessesManager checkStateUpdate");
 
-        AccountsDataBase db = new AccountsDataBase(context);
-        db.open();
+        AccountsDataBase db = AccountsDataBase.getInstance(context);
 
         if (db.countAccount() == 0) {
             Log.i(Constants.LOG_TAG, "ProcessesManager checkStateUpdate: " +
                     "start update cancel - no account");
-            db.close();
             return false;
-        } else {
-            db.close();
         }
 
         SharedPreferences sharedPreferences
