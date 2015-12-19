@@ -7,88 +7,97 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.components.MessagesDataBase;
 import com.example.mailrem.app.components.Notifications;
 import com.example.mailrem.app.pojo.MessageWrap;
 
-import java.util.List;
+import java.util.Map;
 
 public class NotifyFromDB extends BroadcastReceiver {
 
-    private static final String LOG_TAG = "mailrem_log";
+    private static final int DELAY_NOTIFY = 10 * 1000;
 
     private static volatile boolean stopNotify = false;
 
-    public static void startNotifyProcess(Context context, long interval) {
-        Log.d(LOG_TAG, "start notify process");
-        setNextNotify(context, interval);
+    public static void startNotifyProcess(Context context) {
+        Log.d(Constants.LOG_TAG, "NotifyFromDB startNotifyProcess");
+
+        setNextNotify(context);
     }
 
     public static void stopNotify() {
-        Log.d(LOG_TAG, "stop notify");
+        Log.d(Constants.LOG_TAG, "NotifyFromDB stopNotify");
+
         stopNotify = true;
     }
 
     public NotifyFromDB() {
-        Log.d(LOG_TAG, "constructor NotifyFromDB");
+        Log.d(Constants.LOG_TAG, "NotifyFromDB constructor");
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(LOG_TAG, "notify br onReceive");
+        Log.d(Constants.LOG_TAG, "NotifyFromDB onReceive");
 
-        new NotifyThread(context, intent).start();
+        new NotifyThread(context).start();
     }
 
     private class NotifyThread extends Thread {
         private final Context context;
-        private final Intent intent;
 
-        public NotifyThread(Context context, Intent intent) {
+        public NotifyThread(Context context) {
+            Log.d(Constants.LOG_TAG, "NotifyTread constructor");
+
             this.context = context;
-            this.intent = intent;
         }
 
         public void run() {
-            long interval = intent.getLongExtra("interval", 0);
+            Log.d(Constants.LOG_TAG, "NotifyTread run");
 
             notifyFromDB(context);
-
-            setNextNotify(context, interval);
+            setNextNotify(context);
         }
     }
 
-    private static void setNextNotify(Context context, long interval) {
-        Log.d(LOG_TAG, "set next notify");
+    private static void setNextNotify(Context context) {
+        Log.d(Constants.LOG_TAG, "NotifyFromDB setNextNotify");
 
         if (stopNotify) {
+            Log.i(Constants.LOG_TAG, "NotifyFromDB setNextNotify: update cancel");
+
             stopNotify = false;
-            Log.d(LOG_TAG, "set next notify delete");
             return;
         }
 
+        int nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
+
         Intent intentThis = new Intent(context, NotifyFromDB.class);
-        intentThis.putExtra("interval", interval);
 
         PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0,
                 intentThis, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingThis);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + interval, pendingThis);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + nextNotifyTime, pendingThis);
     }
 
     private void notifyFromDB(Context context) {
-        try {
-            MessagesDataBase db = new MessagesDataBase(context);
-            List<MessageWrap> messages = db.getAndUpdateMessagesForNotify();
+        Log.d(Constants.LOG_TAG, "NotifyFromDB notifyFromDB");
 
-            Notifications notifier = new Notifications(context);
+        Notifications notifier = new Notifications(context);
+        MessagesDataBase db = MessagesDataBase.getInstance(context);
 
-            notifier.notifyNewMessage(messages);
+        Map<MessageWrap, Integer> messages = db.getAndUpdateMessagesForNotify();
+        notifier.notifyNewMessages(messages);
+    }
 
-        } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
-        }
+    private static int getNextNotifyTime(Context context) {
+        Log.d(Constants.LOG_TAG, "NotifyFromDB getNextNotifyTime");
+
+        MessagesDataBase db = MessagesDataBase.getInstance(context);
+        return db.nextNotifyTime();
     }
 }

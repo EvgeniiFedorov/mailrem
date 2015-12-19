@@ -1,5 +1,8 @@
 package com.example.mailrem.app.pojo;
 
+import android.util.Log;
+import com.example.mailrem.app.Constants;
+
 import java.util.Date;
 
 public class MessageWrap {
@@ -11,7 +14,9 @@ public class MessageWrap {
     private String subject;
     private String body;
 
-    public MessageWrap() {}
+    public MessageWrap() {
+        Log.d(Constants.LOG_TAG, "MessageWrap constructor");
+    }
 
     public long getUID() {
         return uid;

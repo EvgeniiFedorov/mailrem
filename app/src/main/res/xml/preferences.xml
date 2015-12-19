@@ -44,7 +44,7 @@
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="24">
+                    android:defaultValue="1800">
             </ListPreference>
 
             <ListPreference
@@ -53,7 +53,7 @@
                     android:title="Frequency"
                     android:entries="@array/stage_frequency_entries"
                     android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="60">
+                    android:defaultValue="600">
             </ListPreference>
         </PreferenceScreen>
 
@@ -68,7 +68,7 @@
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="24">
+                    android:defaultValue="180">
             </ListPreference>
 
             <ListPreference
@@ -92,7 +92,7 @@
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="24">
+                    android:defaultValue="180">
             </ListPreference>
 
             <ListPreference
@@ -116,7 +116,7 @@
                     android:title="Duration"
                     android:entries="@array/stage_duration_entries"
                     android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="24">
+                    android:defaultValue="180">
             </ListPreference>
         </PreferenceScreen>
     </PreferenceScreen>
@@ -127,6 +127,13 @@
             android:persistent="false">
 
         <CheckBoxPreference
+                android:key="update_switch"
+                android:summary="Enable/disable update"
+                android:title="Switch on"
+                android:defaultValue="true">
+        </CheckBoxPreference>
+
+        <CheckBoxPreference
                 android:key="use_wifi"
                 android:summary="Update only wifi connection"
                 android:title="WI-FI"
@@ -134,9 +141,9 @@
         </CheckBoxPreference>
 
         <CheckBoxPreference
-                android:key="use_rouming"
-                android:summary="Do not update in rouming"
-                android:title="Rouming"
+                android:key="use_roaming"
+                android:summary="Do not update in roaming"
+                android:title="Roaming"
                 android:defaultValue="true">
         </CheckBoxPreference>
 
@@ -146,34 +153,7 @@
                 android:title="Frequency"
                 android:entries="@array/update_frequency_entries"
                 android:entryValues="@array/update_frequency_values"
-                android:defaultValue="5">
-        </ListPreference>
-
-        <ListPreference
-                android:key="update_interval"
-                android:summary="Interval browsing messages"
-                android:title="Interval browsing"
-                android:entries="@array/update_interval_entries"
-                android:entryValues="@array/update_interval_values"
-                android:defaultValue="72">
+                android:defaultValue="30">
         </ListPreference>
     </PreferenceScreen>
-
-    <CheckBoxPreference
-            android:key="notif1"
-            android:summary="Enable notifications1"
-            android:title="Notifications1"
-            android:defaultValue="true">
-    </CheckBoxPreference>
-
-    <Preference
-            android:title="List">
-    </Preference>
-
-    <EditTextPreference
-            android:key="address"
-            android:summary="Address for notifications"
-            android:title="Address"
-            android:defaultValue="text">
-    </EditTextPreference>
 </PreferenceScreen>

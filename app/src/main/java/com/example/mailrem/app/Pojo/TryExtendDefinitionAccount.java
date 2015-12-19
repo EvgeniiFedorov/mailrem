@@ -2,6 +2,7 @@ package com.example.mailrem.app.pojo;
 
 import android.content.Context;
 import android.util.Log;
+import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.R;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -10,18 +11,17 @@ import java.io.IOException;
 
 public class TryExtendDefinitionAccount {
 
-    private final static String LOG_TAG = "mailrem_log";
-
     private static final String SERVICE = "service";
     private static final String AT = "@";
 
     public static Account getAccount(Context context, String login, String password) {
+        Log.d(Constants.LOG_TAG, "TryExtendDefinitionAccount getAccount");
 
         String[] splitLogin = login.split(AT);
         String userService;
 
-        if (splitLogin.length == 2) {
-            userService = splitLogin[1];
+        if (splitLogin.length > 1) {
+            userService = splitLogin[splitLogin.length - 1];
         } else {
             userService = "";
         }
@@ -47,9 +47,11 @@ public class TryExtendDefinitionAccount {
                 parser.next();
             }
         } catch (XmlPullParserException e) {
-            Log.e(LOG_TAG, "xml parser error: " + e.getMessage());
+            Log.e(Constants.LOG_TAG, "TryExtendDefinitionAccount getAccount: " +
+                    "xml parser error: " + e.getMessage());
         } catch (IOException e) {
-            Log.e(LOG_TAG, "i/o exception in xml parser: " + e.getMessage());
+            Log.e(Constants.LOG_TAG, "TryExtendDefinitionAccount getAccount: " +
+                    "i/o exception in xml parser: " + e.getMessage());
         }
 
         return null;

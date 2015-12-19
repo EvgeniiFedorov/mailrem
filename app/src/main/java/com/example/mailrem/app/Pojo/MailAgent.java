@@ -2,6 +2,7 @@ package com.example.mailrem.app.pojo;
 
 import android.os.StrictMode;
 import android.util.Log;
+import com.example.mailrem.app.Constants;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
 
@@ -13,14 +14,12 @@ import java.util.*;
 
 public class MailAgent {
 
-    private static final String LOG_TAG = "mailrem_log";
-
     private static final String MAIL_STORE_PROTOCOL = "imaps";
 
     private IMAPStore store;
 
     public MailAgent() {
-        Log.d(LOG_TAG, "mail constructor");
+        Log.d(Constants.LOG_TAG, "mail constructor");
         setThreadPolicy();
     }
 
@@ -28,7 +27,7 @@ public class MailAgent {
                         String userMail, String userPassword)
             throws MessagingException, IOException {
 
-        Log.d(LOG_TAG, "mail connect ...");
+        Log.d(Constants.LOG_TAG, "mail connect ...");
 
         if (store != null) {
             throw new MessagingException("Previous connection is not closed");
@@ -46,10 +45,10 @@ public class MailAgent {
             HashMap<String, String> hashMap = new HashMap<String, String>();
             store.id(hashMap);
         } catch (MessagingException e) {
-            Log.e(LOG_TAG, "Server doesn't support ID extension");
+            Log.e(Constants.LOG_TAG, "Server doesn't support ID extension");
         }*/
 
-        Log.d(LOG_TAG, "mail connect OK");
+        Log.d(Constants.LOG_TAG, "mail connect OK");
     }
 
     public void connect(Account account)
@@ -60,7 +59,7 @@ public class MailAgent {
 
 
         public void disconnect() throws MessagingException {
-        Log.d(LOG_TAG, "mail disconnect");
+        Log.d(Constants.LOG_TAG, "mail disconnect");
         if (store == null) {
             throw new MessagingException("Connection is not established");
         }
@@ -70,14 +69,14 @@ public class MailAgent {
     }
 
     private Folder[] getFolders() throws MessagingException {
-        Log.d(LOG_TAG, "mail getFolders");
+        Log.d(Constants.LOG_TAG, "mail getFolders");
         return store.getDefaultFolder().list();
     }
 
     public MessageWrap[] getMessagesSinceUID(long uid, Folder folder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getMessagesSinceUID from folder");
+        Log.d(Constants.LOG_TAG, "mail getMessagesSinceUID from folder");
         openFolder(folder);
 
         IMAPFolder imapFolder = (IMAPFolder) folder;
@@ -93,7 +92,7 @@ public class MailAgent {
     public MessageWrap[] getMessagesSinceUID(long uid, String nameFolder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getMessagesSinceUID by name");
+        Log.d(Constants.LOG_TAG, "mail getMessagesSinceUID by name");
         Folder folder = getFolder(nameFolder);
 
         return getMessagesSinceUID(uid, folder);
@@ -102,7 +101,7 @@ public class MailAgent {
     public List<MessageWrap> getMessagesFromAllFoldersSinceUID(long uid)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getMessagesFromAllFoldersSinceUID from folder");
+        Log.d(Constants.LOG_TAG, "mail getMessagesFromAllFoldersSinceUID from folder");
 
         List<MessageWrap> allMessages = new LinkedList<MessageWrap>();
         Folder[] folders = getFolders();
@@ -120,7 +119,7 @@ public class MailAgent {
             throws MessagingException {
 
 
-        Log.d(LOG_TAG, "mail getUIDForAnsweredMessages from folder");
+        Log.d(Constants.LOG_TAG, "mail getUIDForAnsweredMessages from folder");
         openFolder(folder);
 
         Flags flags = new Flags(Flags.Flag.ANSWERED);
@@ -139,7 +138,7 @@ public class MailAgent {
                                              Folder folder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getMessagesInPeriod from folder");
+        Log.d(Constants.LOG_TAG, "mail getMessagesInPeriod from folder");
         openFolder(folder);
 
         SearchTerm laterThen = new ReceivedDateTerm(ComparisonTerm.GT, start);
@@ -158,7 +157,7 @@ public class MailAgent {
                                              String nameFolder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getMessagesInPeriod by name");
+        Log.d(Constants.LOG_TAG, "mail getMessagesInPeriod by name");
         Folder folder = getFolder(nameFolder);
 
         return getMessagesInPeriod(start, end, folder);
@@ -169,7 +168,7 @@ public class MailAgent {
                                                         Folder folder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getNotAnsweredMessagesInPeriod from folder");
+        Log.d(Constants.LOG_TAG, "mail getNotAnsweredMessagesInPeriod from folder");
         openFolder(folder);
 
         SearchTerm laterThen = new ReceivedDateTerm(ComparisonTerm.GT, start);
@@ -192,7 +191,7 @@ public class MailAgent {
                                                         String nameFolder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getNotAnsweredMessagesInPeriod by name");
+        Log.d(Constants.LOG_TAG, "mail getNotAnsweredMessagesInPeriod by name");
         Folder folder = getFolder(nameFolder);
 
         return getNotAnsweredMessagesInPeriod(start, end, folder);
@@ -201,7 +200,7 @@ public class MailAgent {
     public MessageWrap[] getUnreadMessages(Folder folder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getUnreadMessages from folder");
+        Log.d(Constants.LOG_TAG, "mail getUnreadMessages from folder");
         openFolder(folder);
 
         Flags flags = new Flags(Flags.Flag.SEEN);
@@ -218,32 +217,32 @@ public class MailAgent {
     public MessageWrap[] getUnreadMessages(String nameFolder)
             throws MessagingException {
 
-        Log.d(LOG_TAG, "mail getUnreadMessages by name");
+        Log.d(Constants.LOG_TAG, "mail getUnreadMessages by name");
         Folder folder = getFolder(nameFolder);
 
         return getUnreadMessages(folder);
     }
 
     private void openFolder(Folder folder) throws MessagingException {
-        Log.d(LOG_TAG, "mail openFolder " + folder.getName());
+        Log.d(Constants.LOG_TAG, "mail openFolder " + folder.getName());
 
         folder.open(Folder.READ_ONLY);
     }
 
     private Folder getFolder(String nameFolder) throws MessagingException {
-        Log.d(LOG_TAG, "mail getFolder");
+        Log.d(Constants.LOG_TAG, "mail getFolder");
 
         return store.getFolder(nameFolder);
     }
 
     private void closeFolder(Folder folder) throws MessagingException {
-        Log.d(LOG_TAG, "mail closeFolder");
+        Log.d(Constants.LOG_TAG, "mail closeFolder");
 
         folder.close(false);
     }
 
     private void setThreadPolicy() {
-        Log.d(LOG_TAG, "mail set STP");
+        Log.d(Constants.LOG_TAG, "mail set STP");
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll()
                 .build();

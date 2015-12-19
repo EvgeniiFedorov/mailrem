@@ -7,14 +7,12 @@ import android.util.Log;
 import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.pojo.ProcessesManager;
 
-public class AutoStart extends BroadcastReceiver {
+public class ConnectivityChange extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(Constants.LOG_TAG, "AutoStart onReceive");
+        Log.d(Constants.LOG_TAG, "ConnectivityChange onReceive");
 
-        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            ProcessesManager.start(context);
-        }
+        ProcessesManager.restart(context);
     }
 }

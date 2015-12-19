@@ -7,38 +7,43 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.pojo.MessageWrap;
 import com.example.mailrem.app.pojo.ScheduleManager;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class MessagesDataBase extends SQLiteOpenHelper {
-
-    private static final String LOG_TAG = "mailrem_log";
-
-    private static final int START_STAGE = 0;
-    private static final int COUNT_STAGE = 4;
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MailBase";
 
     private static final String TABLE_MAILS = "Mails";
+
     private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_UID = "uid";
-    private static final String COLUMN_FROM = "from_field";
-    private static final String COLUMN_TO = "to_field";
-    private static final String COLUMN_DATE = "date_field";
-    private static final String COLUMN_SUBJECT = "subject_field";
-    private static final String COLUMN_BODY = "body_field";
+    public static final String COLUMN_UID = "uid";
+    public static final String COLUMN_FROM = "from_field";
+    public static final String COLUMN_TO = "to_field";
+    public static final String COLUMN_DATE = "date_field";
+    public static final String COLUMN_SUBJECT = "subject_field";
+    public static final String COLUMN_BODY = "body_field";
     private static final String COLUMN_STATUS = "status";
     private static final String COLUMN_SCHEDULE = "schedule";
-    private static final String COLUMN_END_STATUS = "end_status";
+    private static final String COLUMN_BEGIN_STATUS = "begin_status_time";
+
+    private static final int POSITION_UID = 1;
+    private static final int POSITION_FROM = 2;
+    private static final int POSITION_TO = 3;
+    private static final int POSITION_DATE = 4;
+    private static final int POSITION_SUBJECT = 5;
+    private static final int POSITION_BODY = 6;
+    private static final int POSITION_STATUS = 7;
+    private static final int POSITION_SCEDULE = 8;
+    private static final int POSITION_BEGIN_STATUS = 9;
 
     private static final String[] COLUMNS_MAILS = {COLUMN_ID, COLUMN_UID, COLUMN_FROM,
             COLUMN_TO, COLUMN_DATE, COLUMN_SUBJECT, COLUMN_BODY,
-            COLUMN_STATUS, COLUMN_SCHEDULE, COLUMN_END_STATUS};
+            COLUMN_STATUS, COLUMN_SCHEDULE, COLUMN_BEGIN_STATUS};
 
     private static final String CREATE_TABLE_MAILS =
             "CREATE TABLE " + TABLE_MAILS + "(" +
@@ -51,71 +56,90 @@ public class MessagesDataBase extends SQLiteOpenHelper {
                     COLUMN_BODY + " TEXT, " +
                     COLUMN_STATUS + " INTEGER, " +
                     COLUMN_SCHEDULE + " INTEGER, " +
-                    COLUMN_END_STATUS + " INTEGER " +
+                    COLUMN_BEGIN_STATUS + " INTEGER " +
                     ")";
 
     private static final String DELETE_TABLE_MAILS =
             "DROP TABLE IF EXISTS " + TABLE_MAILS;
 
+    private static final int DEFAULT_NEXT_NOTIFY_TIME = 24 * 60 * 60 * 1000;
+
+    private static MessagesDataBase instance;
     private final Context context;
     private SQLiteDatabase databaseForCursor;
 
+    public static synchronized MessagesDataBase getInstance(Context context) {
+        if (instance == null) {
+            instance = new MessagesDataBase(context.getApplicationContext());
+        }
 
-    public MessagesDataBase(Context context) {
+        return instance;
+    }
+
+    private MessagesDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        Log.d(Constants.LOG_TAG, "MessagesDataBase constructor");
+
         this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(LOG_TAG, "create db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase onCreate");
+
         db.execSQL(CREATE_TABLE_MAILS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(LOG_TAG, "update db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase onUpgrade");
+
         db.execSQL(DELETE_TABLE_MAILS);
         onCreate(db);
     }
 
     public void open() {
-        databaseForCursor = getWritableDatabase();
+        Log.d(Constants.LOG_TAG, "MessagesDataBase open");
+
+        databaseForCursor = getReadableDatabase();
     }
 
     public void close() {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase close");
+
         databaseForCursor.close();
     }
 
     public Cursor getCursor() {
-        Log.d(LOG_TAG, "get cursor all message from db");
-        String query = "SELECT * FROM " + TABLE_MAILS;
+        Log.d(Constants.LOG_TAG, "MessagesDataBase getCursor");
 
+        String query = "SELECT * FROM " + TABLE_MAILS;
         return databaseForCursor.rawQuery(query, null);
     }
 
     public void addIfNotExistMessage(MessageWrap message) {
-        Log.d(LOG_TAG, "add message if not exist db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase addIfNotExistMessage");
+
         if (getMessage(message.getUID()) == null) {
             addMessage(message);
         } else {
-            Log.i(LOG_TAG, "message already exists");
+            Log.w(Constants.LOG_TAG, "MessagesDataBase addIfNotExistMessage: " +
+                    "message already exists");
         }
     }
 
     public void addMessage(MessageWrap message) {
-        Log.d(LOG_TAG, "add message in db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase addMessage");
 
         ContentValues values = messageToContentValues(message);
-        ScheduleManager scheduleManager = new ScheduleManager(context);
 
-        int status = START_STAGE;
-        int scheduleTime = dateToInt(new Date()) + scheduleManager.frequencyStage(status);
-        int endStatusTime = dateToInt(new Date()) + scheduleManager.durationStage(status);
+        int status = Constants.START_STAGE;
+        int scheduleTime = dateToInt(new Date());
+        int beginStatusTime = dateToInt(new Date());
 
         values.put(COLUMN_STATUS, status);
         values.put(COLUMN_SCHEDULE, scheduleTime);
-        values.put(COLUMN_END_STATUS, endStatusTime);
+        values.put(COLUMN_BEGIN_STATUS, beginStatusTime);
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_MAILS, null, values);
@@ -123,7 +147,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     }
 
     public MessageWrap getMessage(long uid) {
-        Log.d(LOG_TAG, "get message from db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase getMessage");
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(uid)};
@@ -140,11 +164,11 @@ public class MessagesDataBase extends SQLiteOpenHelper {
                 null
         );
 
-        if (!cursor.moveToFirst()) {
-            return null;
-        }
+        MessageWrap message = null;
 
-        MessageWrap message = extractMessageFromCursor(cursor);
+        if (cursor.moveToFirst()) {
+            message = extractMessageFromCursor(cursor);
+        }
 
         cursor.close();
         db.close();
@@ -152,71 +176,74 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     }
 
     public List<MessageWrap> getAllMessages() {
-        Log.d(LOG_TAG, "get all message from db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase getAllMessages");
+
         List<MessageWrap> messages = new LinkedList<MessageWrap>();
         String query = "SELECT * FROM " + TABLE_MAILS;
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
-        if (!cursor.moveToFirst()) {
-            return messages;
+        if (cursor.moveToFirst()) {
+            do {
+                MessageWrap message = extractMessageFromCursor(cursor);
+                messages.add(message);
+            } while (cursor.moveToNext());
         }
-
-        do {
-            MessageWrap message = extractMessageFromCursor(cursor);
-            messages.add(message);
-        } while (cursor.moveToNext());
 
         cursor.close();
         db.close();
         return messages;
     }
 
-    public List<MessageWrap> getAndUpdateMessagesForNotify() {
-        Log.d(LOG_TAG, "get message from db for notify");
+    public Map<MessageWrap, Integer> getAndUpdateMessagesForNotify() {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase getAndUpdateMessagesForNotify");
 
-        List<MessageWrap> messages = new LinkedList<MessageWrap>();
-
-        int currentDate = dateToInt(new Date());
-        String selection = COLUMN_SCHEDULE + " <= ?";
-        String[] selectionArgs = {String.valueOf(currentDate)};
-
+        Map<MessageWrap, Integer> messages = new HashMap<MessageWrap, Integer>();
+        ScheduleManager scheduleManager = new ScheduleManager(context);
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(
-                TABLE_MAILS,
-                COLUMNS_MAILS,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null,
-                null
-        );
 
-        if (!cursor.moveToFirst()) {
-            return messages;
-        }
+        for (int status = Constants.START_STAGE;
+             status < Constants.COUNT_STAGE; ++status) {
 
-        do {
-            MessageWrap message = extractMessageFromCursor(cursor);
-            int status = cursor.getInt(7);
-            int endStatusTime = cursor.getInt(9);
+            int timeLimit = dateToInt(new Date()) - scheduleManager.frequencyStage(status);
 
-            if (status < COUNT_STAGE - 1) {
-                messages.add(message);
+            String selection = COLUMN_SCHEDULE + " <= ? AND " + COLUMN_STATUS + " = ?";
+            String[] selectionArgs = {String.valueOf(timeLimit), String.valueOf(status)};
+
+            Cursor cursor = db.query(
+                    TABLE_MAILS,
+                    COLUMNS_MAILS,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+            if (cursor.moveToFirst()) {
+                do {
+                    MessageWrap message = extractMessageFromCursor(cursor);
+                    int beginStatusTime = cursor.getInt(POSITION_BEGIN_STATUS);
+
+                    if (status != Constants.COUNT_STAGE - 1) {
+                        messages.put(message, status);
+                    }
+
+                    updateMessage(message, status, beginStatusTime);
+                } while (cursor.moveToNext());
             }
 
-            updateMessage(message, status, endStatusTime);
-        } while (cursor.moveToNext());
+            cursor.close();
+        }
 
-        cursor.close();
         db.close();
         return messages;
     }
 
     private void deleteMessage(long uid) {
-        Log.d(LOG_TAG, "delete message from db");
+        Log.d(Constants.LOG_TAG, "MessagesDataBase deleteMessage");
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(uid)};
@@ -226,35 +253,30 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         db.close();
     }
 
-    private void updateMessage(MessageWrap message, int status, int endStatusTime) {
-
-        Log.d(LOG_TAG, "update message from db");
+    private void updateMessage(MessageWrap message, int status, int beginStatusTime) {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase updateMessage");
 
         ContentValues values = messageToContentValues(message);
         ScheduleManager scheduleManager = new ScheduleManager(context);
 
         int now = dateToInt(new Date());
-        int newStatus = status;
-        int newEndStatusTime = endStatusTime;
-        int newScheduleTime;
 
-        if (now > newEndStatusTime) {
-            status++;
-            newEndStatusTime = now + scheduleManager.durationStage(status);
+        int newStatus = status;
+        int newBeginStatusTime = beginStatusTime;
+
+        if (now > newBeginStatusTime + scheduleManager.durationStage(status)) {
+            newStatus++;
+            newBeginStatusTime = now;
         }
 
-        if (status < COUNT_STAGE - 1) {
-            newScheduleTime = now + scheduleManager.frequencyStage(status);
-        } else if (status == COUNT_STAGE - 1) {
-            newScheduleTime = newEndStatusTime;
-        } else {
+        if (status == Constants.COUNT_STAGE) {
             deleteMessage(message.getUID());
             return;
         }
 
         values.put(COLUMN_STATUS, newStatus);
-        values.put(COLUMN_SCHEDULE, newScheduleTime);
-        values.put(COLUMN_END_STATUS, newEndStatusTime);
+        values.put(COLUMN_SCHEDULE, now);
+        values.put(COLUMN_BEGIN_STATUS, newBeginStatusTime);
 
         String selection = COLUMN_UID + " = ?";
         String[] selectionArgs = {String.valueOf(message.getUID())};
@@ -264,20 +286,63 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         db.close();
     }
 
+    public int nextNotifyTime() {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase nextNotifyTime");
+
+        ScheduleManager scheduleManager = new ScheduleManager(context);
+        SQLiteDatabase db = getReadableDatabase();
+        int nextTime = DEFAULT_NEXT_NOTIFY_TIME;
+
+        for (int status = Constants.START_STAGE;
+             status < Constants.COUNT_STAGE; ++status) {
+
+            String[] column = {"MIN( " + COLUMN_SCHEDULE + ")"};
+
+            String selection = COLUMN_STATUS + " = ?";
+            String[] selectionArgs = {String.valueOf(status)};
+
+            Cursor cursor = db.query(
+                    TABLE_MAILS,
+                    column,
+                    selection,
+                    selectionArgs,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+
+            if (cursor.moveToFirst()) {
+                if (nextTime > cursor.getInt(0) + scheduleManager.frequencyStage(status)) {
+                    nextTime = cursor.getInt(0) + scheduleManager.frequencyStage(status);
+                }
+            }
+
+            cursor.close();
+        }
+
+        db.close();
+        return nextTime;
+    }
+
     private MessageWrap extractMessageFromCursor(Cursor cursor) {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase extractMessageFromCursor");
+
         MessageWrap message = new MessageWrap();
 
-        message.setUID(cursor.getLong(1));
-        message.setFrom(cursor.getString(2));
-        message.setTo(cursor.getString(3));
-        message.setDate(intToDate(cursor.getInt(4)));
-        message.setSubject(cursor.getString(5));
-        message.setBody(cursor.getString(6));
+        message.setUID(cursor.getLong(POSITION_UID));
+        message.setFrom(cursor.getString(POSITION_FROM));
+        message.setTo(cursor.getString(POSITION_TO));
+        message.setDate(intToDate(cursor.getInt(POSITION_DATE)));
+        message.setSubject(cursor.getString(POSITION_SUBJECT));
+        message.setBody(cursor.getString(POSITION_BODY));
 
         return message;
     }
 
     private ContentValues messageToContentValues(MessageWrap message) {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase messageToContentValues");
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_UID, message.getUID());
         values.put(COLUMN_FROM, message.getFrom());
@@ -290,10 +355,14 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     }
 
     private int dateToInt(Date date) {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase dateToInt");
+
         return (int) (date.getTime() / 1000);
     }
 
     private Date intToDate(int value) {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase intToDate");
+
         return new Date((long) value * 1000);
     }
 }

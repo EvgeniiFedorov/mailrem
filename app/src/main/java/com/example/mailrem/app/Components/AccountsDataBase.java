@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.pojo.Account;
 
 import java.util.LinkedList;
@@ -13,17 +14,21 @@ import java.util.List;
 
 public class AccountsDataBase extends SQLiteOpenHelper {
 
-    private static final String LOG_TAG = "mailrem_log";
-
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "AccountsBase";
 
     private static final String TABLE_ACCOUNTS = "Accounts";
+
     private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_LOGIN = "login";
-    private static final String COLUMN_PASSWORD = "password";
-    private static final String COLUMN_HOST = "host";
-    private static final String COLUMN_PORT = "port";
+    public static final String COLUMN_LOGIN = "login";
+    public static final String COLUMN_PASSWORD = "password";
+    public static final String COLUMN_HOST = "host";
+    public static final String COLUMN_PORT = "port";
+
+    private static final int POSITION_LOGIN = 1;
+    private static final int POSITION_PASSWORD = 2;
+    private static final int POSITION_HOST = 3;
+    private static final int POSITION_PORT = 4;
 
     private static final String[] COLUMNS_ACCOUNTS = {COLUMN_ID, COLUMN_LOGIN,
             COLUMN_PASSWORD, COLUMN_HOST, COLUMN_PORT};
@@ -40,55 +45,104 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_ACCOUNTS =
             "DROP TABLE IF EXISTS " + TABLE_ACCOUNTS;
 
+    private static AccountsDataBase instance;
     private SQLiteDatabase databaseForCursor;
 
-    public AccountsDataBase(Context context) {
+    public static synchronized AccountsDataBase getInstance(Context context) {
+        if (instance == null) {
+            instance = new AccountsDataBase(context.getApplicationContext());
+        }
+
+        return instance;
+    }
+
+    private AccountsDataBase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        Log.d(Constants.LOG_TAG, "AccountsDataBase constructor");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(LOG_TAG, "create db");
+        Log.d(Constants.LOG_TAG, "AccountsDataBase onCreate");
+
         db.execSQL(CREATE_TABLE_ACCOUNTS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(LOG_TAG, "update db");
+        Log.d(Constants.LOG_TAG, "AccountsDataBase onUpgrade");
+
         db.execSQL(DELETE_TABLE_ACCOUNTS);
         onCreate(db);
     }
 
     public void open() {
-        databaseForCursor = getWritableDatabase();
+        Log.d(Constants.LOG_TAG, "AccountsDataBase open");
+
+        databaseForCursor = getReadableDatabase();
     }
 
     public void close() {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase close");
+
         databaseForCursor.close();
     }
 
     public Cursor getCursor() {
-        Log.d(LOG_TAG, "get cursor accounts from db");
-        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getCursor");
 
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
         return databaseForCursor.rawQuery(query, null);
     }
 
     public void deleteAccount(long id) {
-        Log.d(LOG_TAG, "delete account from db");
+        Log.d(Constants.LOG_TAG, "AccountsDataBase deleteAccount");
 
         String selection = COLUMN_ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
 
-        databaseForCursor.delete(TABLE_ACCOUNTS, selection, selectionArgs);
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_ACCOUNTS, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateAccountByLogin(Account account) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase updateAccountByLogin");
+
+        ContentValues values = accountToContentValues(account);
+
+        String selection = COLUMN_LOGIN + " = ?";
+        String[] selectionArgs = {account.getLogin()};
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public int countAccount() {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase countAccount");
+
+        String query = "SELECT COUNT(*) FROM " + TABLE_ACCOUNTS;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+
+        cursor.close();
+        db.close();
+        return count;
     }
 
     public String getLoginById(long id) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getLoginById");
 
         String selection = COLUMN_ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
 
-        Cursor cursor = databaseForCursor.query(
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(
                 TABLE_ACCOUNTS,
                 new String[] {COLUMN_LOGIN},
                 selection,
@@ -99,38 +153,41 @@ public class AccountsDataBase extends SQLiteOpenHelper {
                 null
         );
 
-        if (!cursor.moveToFirst()) {
-            return null;
+        String login = null;
+        if (cursor.moveToFirst()) {
+            login = cursor.getString(POSITION_LOGIN);
         }
 
-        String login = cursor.getString(0);
-
         cursor.close();
+        db.close();
         return login;
     }
 
-    public void addIfNotExistAccount(Account account) {
-        Log.d(LOG_TAG, "add account if not exist db");
+    public boolean addIfNotExistAccount(Account account) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase addIfNotExistAccount");
+
         if (getAccount(account.getLogin()) == null) {
             addAccount(account);
+            return true;
         } else {
-            Log.i(LOG_TAG, "account already exists");
+            Log.w(Constants.LOG_TAG, "AccountsDataBase addIfNotExistAccount: " +
+                    "account already exists");
+            return false;
         }
     }
 
     public void addAccount(Account account) {
-        Log.d(LOG_TAG, "add account in db");
+        Log.d(Constants.LOG_TAG, "AccountsDataBase addAccount");
 
         ContentValues values = accountToContentValues(account);
 
         SQLiteDatabase db = getWritableDatabase();
-
         db.insert(TABLE_ACCOUNTS, null, values);
         db.close();
     }
 
     public Account getAccount(String login) {
-        Log.d(LOG_TAG, "get account from db");
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getAccount");
 
         String selection = COLUMN_LOGIN + " = ?";
         String[] selectionArgs = {login};
@@ -147,47 +204,32 @@ public class AccountsDataBase extends SQLiteOpenHelper {
                 null
         );
 
-        if (!cursor.moveToFirst()) {
-            return null;
-        }
+        Account account = null;
 
-        Account account = extractAccountFromCursor(cursor);
+        if (cursor.moveToFirst()) {
+            account = extractAccountFromCursor(cursor);
+        }
 
         cursor.close();
         db.close();
         return account;
     }
 
-    public void updateAccountByLogin(Account account) {
-        Log.d(LOG_TAG, "update account by login from db");
-
-        ContentValues values = accountToContentValues(account);
-
-        String selection = COLUMN_LOGIN + " = ?";
-        String[] selectionArgs = {account.getLogin()};
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        db.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
-        db.close();
-    }
-
     public List<Account> getAllAccounts() {
-        Log.d(LOG_TAG, "get all accounts from db");
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getAllAccounts");
+
         List<Account> accounts = new LinkedList<Account>();
         String query = "SELECT * FROM " + TABLE_ACCOUNTS;
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
-        if (!cursor.moveToFirst()) {
-            return accounts;
+        if (cursor.moveToFirst()) {
+            do {
+                Account account = extractAccountFromCursor(cursor);
+                accounts.add(account);
+            } while (cursor.moveToNext());
         }
-
-        do {
-            Account account = extractAccountFromCursor(cursor);
-            accounts.add(account);
-        } while (cursor.moveToNext());
 
         cursor.close();
         db.close();
@@ -195,13 +237,16 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     }
 
     private Account extractAccountFromCursor(Cursor cursor) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase extractAccountFromCursor");
 
-        return new Account(cursor.getString(1),
-                cursor.getString(2), cursor.getString(3),
-                cursor.getInt(4));
+        return new Account(cursor.getString(POSITION_LOGIN),
+                cursor.getString(POSITION_PASSWORD), cursor.getString(POSITION_HOST),
+                cursor.getInt(POSITION_PORT));
     }
 
     private ContentValues accountToContentValues(Account account) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase accountToContentValues");
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_LOGIN, account.getLogin());
         values.put(COLUMN_PASSWORD, account.getPassword());

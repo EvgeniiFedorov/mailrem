@@ -17,7 +17,6 @@
 
     <!--Authentication-->
     <string name="authentication">Mailrem</string>
-    <string name="account_already_exists">Account already exists</string>
     <string name="empty_account_list">No accounts</string>
     <string name="button_add_account">Add account</string>
     <string name="button_cancel_account">Back</string>
@@ -38,6 +37,8 @@
     <string name="next">Next</string>
     <string name="port_cast_fail">Un correct number format</string>
 
+    <string name="account_already_exists">Account already exists</string>
+    <string name="account_add_ok">Account added</string>
     <string name="default_info_text">Sign In</string>
     <string name="authorization_fail">Authorization fail</string>
     <string name="connection_progress">connect …</string>

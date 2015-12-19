@@ -1,6 +1,7 @@
 package com.example.mailrem.app.pojo;
 
 import android.util.Log;
+import com.example.mailrem.app.Constants;
 import com.sun.mail.imap.IMAPFolder;
 
 import javax.mail.*;
@@ -10,13 +11,11 @@ import java.util.Date;
 
 public final class MessageAnalyzer {
 
-    private final static String LOG_TAG = "mailrem_log";
-
     private final static String ERROR_STRING = "error in read message";
     private final static String TEXT_NOT_FOUND = "text not found";
 
     public static MessageWrap messageWrapping(Message message, IMAPFolder folder) {
-        Log.d(LOG_TAG, "wrapping message " + String.valueOf(getUID(message, folder)));
+        Log.d(Constants.LOG_TAG, "wrapping message " + String.valueOf(getUID(message, folder)));
         MessageWrap messageWrap = new MessageWrap();
 
         messageWrap.setUID(getUID(message, folder));
@@ -30,7 +29,7 @@ public final class MessageAnalyzer {
     }
 
     public static MessageWrap[] messageWrapping(Message[] messages, IMAPFolder folder) {
-        Log.d(LOG_TAG, "wrapping messages");
+        Log.d(Constants.LOG_TAG, "wrapping messages");
         MessageWrap[] messageWraps = new MessageWrap[messages.length];
 
         for (int index = 0; index < messages.length; ++index) {
@@ -41,7 +40,7 @@ public final class MessageAnalyzer {
     }
 
     public static long[] getMessagesUID(Message[] messages, IMAPFolder folder) {
-        Log.d(LOG_TAG, "wrapping get messages uid");
+        Log.d(Constants.LOG_TAG, "wrapping get messages uid");
 
         long[] messagesUID = new long[messages.length];
 
@@ -53,21 +52,21 @@ public final class MessageAnalyzer {
     }
 
     private static long getUID(Message message, IMAPFolder folder) {
-        Log.d(LOG_TAG, "message get uid");
+        Log.d(Constants.LOG_TAG, "message get uid");
         try {
             return folder.getUID(message);
         } catch(MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return 0;
         }
     }
 
     private static String getFrom(Message message) {
-        Log.d(LOG_TAG, "message get from");
+        Log.d(Constants.LOG_TAG, "message get from");
         try {
             Address[] addresses = message.getFrom();
             if (addresses == null || addresses.length == 0) {
-                Log.i(LOG_TAG, "No field from");
+                Log.i(Constants.LOG_TAG, "No field from");
                 return ERROR_STRING;
             }
 
@@ -83,98 +82,98 @@ public final class MessageAnalyzer {
             }
             return "From: " + personal + "\nAddress: " + address;
         } catch (MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return ERROR_STRING;
         }
     }
 
     private static String getTo(Message message) {
-        Log.d(LOG_TAG, "message get to");
+        Log.d(Constants.LOG_TAG, "message get to");
         try {
             Address[] addresses = message.getAllRecipients();
             if (addresses == null || addresses.length == 0) {
-                Log.i(LOG_TAG, "No field to");
+                Log.i(Constants.LOG_TAG, "No field to");
                 return ERROR_STRING;
             }
             return addresses[0].toString();
         } catch (MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return ERROR_STRING;
         }
     }
 
     private static Date getDate(Message message) {
-        Log.d(LOG_TAG, "message get date");
+        Log.d(Constants.LOG_TAG, "message get date");
         try {
             return message.getReceivedDate();
         } catch (MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return new Date(0);
         }
     }
 
     private static String getSubject(Message message) {
-        Log.d(LOG_TAG, "message get subject");
+        Log.d(Constants.LOG_TAG, "message get subject");
         try {
             return message.getSubject();
         } catch (MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return ERROR_STRING;
         }
     }
 
     private static String getBody(Message message) {
-        Log.d(LOG_TAG, "message get body");
+        Log.d(Constants.LOG_TAG, "message get body");
         /*try {
-            Log.d(LOG_TAG,"111");
+            Log.d(Constants.LOG_TAG,"111");
             Object content = message.getContent();
-            Log.d(LOG_TAG,"112");
+            Log.d(Constants.LOG_TAG,"112");
             if (message.isMimeType("text/*")) {
-                Log.d(LOG_TAG,"12");
+                Log.d(Constants.LOG_TAG,"12");
                 return (String) message.getContent();
             }
-            Log.d(LOG_TAG,"13");
+            Log.d(Constants.LOG_TAG,"13");
 
             if (message.isMimeType("multipart/*")) {
-                Log.d(LOG_TAG, "1");
+                Log.d(Constants.LOG_TAG, "1");
                 Multipart multipart = (Multipart) message.getContent();
-                Log.d(LOG_TAG,"2");
+                Log.d(Constants.LOG_TAG,"2");
                 for (int partNumber = 0; partNumber < multipart.getCount(); ++partNumber) {
-                    Log.d(LOG_TAG,"3");
+                    Log.d(Constants.LOG_TAG,"3");
                     BodyPart bodyPart = multipart.getBodyPart(partNumber);
-                    Log.d(LOG_TAG,"4");
+                    Log.d(Constants.LOG_TAG,"4");
                     if (bodyPart.isMimeType("text/plain")) {
-                        Log.d(LOG_TAG,"5");
+                        Log.d(Constants.LOG_TAG,"5");
                         return (String) bodyPart.getContent();
                     }
-                    Log.d(LOG_TAG,"6");
+                    Log.d(Constants.LOG_TAG,"6");
                 }
-                Log.d(LOG_TAG,"7");
+                Log.d(Constants.LOG_TAG,"7");
             }
-            Log.d(LOG_TAG,"8");
+            Log.d(Constants.LOG_TAG,"8");
             return TEXT_NOT_FOUND;
         } */ /*catch (MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return ERROR_STRING;
         } catch (IOException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return ERROR_STRING;
         } */ /*catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            Log.e(LOG_TAG, errors.toString());
+            Log.e(Constants.LOG_TAG, errors.toString());
             return ERROR_STRING;
         }*/
         return "text";
     }
 
     private static boolean isNeedAnswer(Message message) {
-        Log.d(LOG_TAG, "message isNeedAnswer");
+        Log.d(Constants.LOG_TAG, "message isNeedAnswer");
         try {
             return message.isSet(Flags.Flag.ANSWERED);
         } catch (MessagingException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(Constants.LOG_TAG, e.getMessage());
             return false;
         }
     }
