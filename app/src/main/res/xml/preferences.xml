@@ -60,7 +60,7 @@
                 android:title="Frequency"
                 android:entries="@array/update_frequency_entries"
                 android:entryValues="@array/update_frequency_values"
-                android:defaultValue="30">
+                android:defaultValue="10">
         </ListPreference>
     </PreferenceCategory>
 

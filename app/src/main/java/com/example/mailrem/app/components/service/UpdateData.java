@@ -36,8 +36,8 @@ public class UpdateData extends BroadcastReceiver {
     public static synchronized void startUpdateProcess(Context context, long interval) {
         Log.d(Constants.LOG_TAG, "UpdateData startUpdateProcess");
 
-        long uid = getUIDFromSettings(context.getApplicationContext());
-        setNextUpdate(context, interval, uid);
+        long uid = getUIDFromSettings(context);
+        setNextUpdate(context.getApplicationContext(), interval, uid);
     }
 
     public static synchronized void stopUpdate(Context context) {
@@ -133,7 +133,7 @@ public class UpdateData extends BroadcastReceiver {
             MessagesDataBase messagesDataBase = MessagesDataBase.getInstance(context);
 
             for (Account account : accounts) {
-                mailAgent.connect(account);
+                /*mailAgent.connect(account);
                 List<MessageWrap> messagesWrap = mailAgent.getMessagesFromAllFoldersSinceUID(uid);
                 mailAgent.disconnect();
 
@@ -142,7 +142,7 @@ public class UpdateData extends BroadcastReceiver {
                     if (messageWrap.getUID() >= nextUID) {
                         nextUID = messageWrap.getUID() + 1;
                     }
-                }
+                }*/
             }
 
             return nextUID;

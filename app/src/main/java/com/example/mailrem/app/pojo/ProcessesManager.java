@@ -15,7 +15,7 @@ public class ProcessesManager {
 
     private static final String UPDATE_SWITCH = "update_switch";
     private static final String NOTIFY_SWITCH = "notify_switch";
-    private static final String UPDATE_INTERVAL = "update_interval";
+    private static final String UPDATE_INTERVAL = "update_frequency";
     private static final String WIFI_ONLY = "update_use_wifi";
     private static final String ROUMING_USE = "update_use_roaming";
 
@@ -28,7 +28,8 @@ public class ProcessesManager {
             SharedPreferences sharedPreferences
                     = PreferenceManager.getDefaultSharedPreferences(context);
 
-            int intervalUpdate = sharedPreferences.getInt(UPDATE_INTERVAL, 0);
+            String interval = sharedPreferences.getString(UPDATE_INTERVAL, "err");
+            int intervalUpdate = Integer.parseInt(interval);
 
             Log.i(Constants.LOG_TAG, "ProcessesManager startUpdate: start update");
             UpdateData.startUpdateProcess(context, intervalUpdate * 1000);

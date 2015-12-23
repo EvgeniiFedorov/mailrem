@@ -75,8 +75,6 @@ public class NotifyFromDB extends BroadcastReceiver {
     private static void setNextNotify(Context context) {
         Log.d(Constants.LOG_TAG, "NotifyFromDB setNextNotify");
 
-        int nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
-
         Intent intentThis = new Intent(context, NotifyFromDB.class);
 
         PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0,
@@ -88,11 +86,13 @@ public class NotifyFromDB extends BroadcastReceiver {
                     context.getSystemService(Context.ALARM_SERVICE);
 
             if (Looper.myLooper() == Looper.getMainLooper() && stopNotify) {
-                Log.i(Constants.LOG_TAG, "NotifyFromDB setNextNotify: update cancel");
+                Log.i(Constants.LOG_TAG, "NotifyFromDB setNextNotify: notify cancel");
 
                 alarmManager.cancel(pendingThis);
                 stopNotify = false;
             } else {
+                int nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
+
                 alarmManager.set(AlarmManager.RTC_WAKEUP,
                         System.currentTimeMillis() + nextNotifyTime, pendingThis);
             }
@@ -115,6 +115,6 @@ public class NotifyFromDB extends BroadcastReceiver {
         Log.d(Constants.LOG_TAG, "NotifyFromDB getNextNotifyTime");
 
         MessagesDataBase db = MessagesDataBase.getInstance(context);
-        return db.nextNotifyTime();
+        return 0;//db.nextNotifyTime();
     }
 }
