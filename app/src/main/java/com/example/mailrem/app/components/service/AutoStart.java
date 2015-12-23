@@ -14,7 +14,8 @@ public class AutoStart extends BroadcastReceiver {
         Log.d(Constants.LOG_TAG, "AutoStart onReceive");
 
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            ProcessesManager.start(context);
+            ProcessesManager.restartUpdate(context);
+            ProcessesManager.restartNotify(context);
         }
     }
 }

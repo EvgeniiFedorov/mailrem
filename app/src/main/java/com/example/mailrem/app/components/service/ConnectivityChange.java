@@ -13,6 +13,6 @@ public class ConnectivityChange extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(Constants.LOG_TAG, "ConnectivityChange onReceive");
 
-        ProcessesManager.restart(context);
+        ProcessesManager.restartUpdate(context);
     }
 }

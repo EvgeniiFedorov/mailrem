@@ -6,9 +6,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 import android.widget.SimpleCursorAdapter;
@@ -21,18 +19,6 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
     private MessagesDataBase dataBase;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        Log.d(Constants.LOG_TAG, "ListMails onCreateView");
-
-        dataBase = MessagesDataBase.getInstance(getActivity());
-        dataBase.open();
-
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(Constants.LOG_TAG, "ListMails onActivityCreated");
@@ -42,6 +28,9 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
         int[] to = new int[]{R.id.from, R.id.subject};
 
         setEmptyText(getResources().getString(R.string.empty_mail_list));
+
+        dataBase = MessagesDataBase.getInstance(getActivity());
+        dataBase.open();
 
         adapter = new SimpleCursorAdapter(getActivity(), R.layout.messages_list_view,
                 null, from, to, 0);
@@ -60,9 +49,9 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(Constants.LOG_TAG, "ListMails onDestroyView");
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(Constants.LOG_TAG, "ListMails onDestroy");
 
         dataBase.close();
     }

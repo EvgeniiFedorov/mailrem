@@ -27,18 +27,6 @@ public class ListAccounts extends ListFragment
     private AccountsDataBase dataBase;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        Log.d(Constants.LOG_TAG, "ListAccounts onCreateView");
-
-        dataBase = AccountsDataBase.getInstance(getActivity());
-        dataBase.open();
-
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(Constants.LOG_TAG, "ListAccounts onActivityCreated");
@@ -47,6 +35,9 @@ public class ListAccounts extends ListFragment
         int[] to = new int[]{R.id.login};
 
         setEmptyText(getResources().getString(R.string.empty_account_list));
+
+        dataBase = AccountsDataBase.getInstance(getActivity());
+        dataBase.open();
 
         adapter = new SimpleCursorAdapter(getActivity(), R.layout.accouunts_list_view,
                 null, from, to, 0);
@@ -65,9 +56,9 @@ public class ListAccounts extends ListFragment
     }
 
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         super.onDestroyView();
-        Log.d(Constants.LOG_TAG, "ListAccounts onDestroyView");
+        Log.d(Constants.LOG_TAG, "ListAccounts onDestroy");
 
         dataBase.close();
     }
@@ -110,7 +101,7 @@ public class ListAccounts extends ListFragment
                 dataBase.deleteAccount(adapterInfo.id);
 
                 if (dataBase.countAccount() == 0) {
-                    ProcessesManager.stop();
+                    ProcessesManager.stopUpdate(getActivity());
                 }
 
                 refresh();

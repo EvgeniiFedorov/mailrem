@@ -45,8 +45,11 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     private static final String DELETE_TABLE_ACCOUNTS =
             "DROP TABLE IF EXISTS " + TABLE_ACCOUNTS;
 
+    private static final Object lock = new Object();
+
     private static AccountsDataBase instance;
-    private SQLiteDatabase databaseForCursor;
+    private static SQLiteDatabase database;
+    private static int countOpenConnection = 0;
 
     public static synchronized AccountsDataBase getInstance(Context context) {
         if (instance == null) {
@@ -79,89 +82,35 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     public void open() {
         Log.d(Constants.LOG_TAG, "AccountsDataBase open");
 
-        databaseForCursor = getReadableDatabase();
+        synchronized (lock) {
+            if (countOpenConnection == 0) {
+                database = getWritableDatabase();
+            }
+
+            countOpenConnection++;
+        }
     }
 
     public void close() {
         Log.d(Constants.LOG_TAG, "AccountsDataBase close");
 
-        databaseForCursor.close();
+        synchronized (lock) {
+            countOpenConnection--;
+
+            if (countOpenConnection == 0) {
+                database.close();
+                database = null;
+            }
+        }
     }
 
     public Cursor getCursor() {
         Log.d(Constants.LOG_TAG, "AccountsDataBase getCursor");
 
         String query = "SELECT * FROM " + TABLE_ACCOUNTS;
-        return databaseForCursor.rawQuery(query, null);
+        return database.rawQuery(query, null);
     }
 
-    public void deleteAccount(long id) {
-        Log.d(Constants.LOG_TAG, "AccountsDataBase deleteAccount");
-
-        String selection = COLUMN_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-
-        SQLiteDatabase db = getWritableDatabase();
-        db.delete(TABLE_ACCOUNTS, selection, selectionArgs);
-        db.close();
-    }
-
-    public void updateAccountByLogin(Account account) {
-        Log.d(Constants.LOG_TAG, "AccountsDataBase updateAccountByLogin");
-
-        ContentValues values = accountToContentValues(account);
-
-        String selection = COLUMN_LOGIN + " = ?";
-        String[] selectionArgs = {account.getLogin()};
-
-        SQLiteDatabase db = getWritableDatabase();
-        db.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
-        db.close();
-    }
-
-    public int countAccount() {
-        Log.d(Constants.LOG_TAG, "AccountsDataBase countAccount");
-
-        String query = "SELECT COUNT(*) FROM " + TABLE_ACCOUNTS;
-
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        cursor.moveToFirst();
-        int count = cursor.getInt(0);
-
-        cursor.close();
-        db.close();
-        return count;
-    }
-
-    public String getLoginById(long id) {
-        Log.d(Constants.LOG_TAG, "AccountsDataBase getLoginById");
-
-        String selection = COLUMN_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(
-                TABLE_ACCOUNTS,
-                new String[] {COLUMN_LOGIN},
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null,
-                null
-        );
-
-        String login = null;
-        if (cursor.moveToFirst()) {
-            login = cursor.getString(POSITION_LOGIN);
-        }
-
-        cursor.close();
-        db.close();
-        return login;
-    }
 
     public boolean addIfNotExistAccount(Account account) {
         Log.d(Constants.LOG_TAG, "AccountsDataBase addIfNotExistAccount");
@@ -176,14 +125,12 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         }
     }
 
-    public void addAccount(Account account) {
+    public synchronized void addAccount(Account account) {
         Log.d(Constants.LOG_TAG, "AccountsDataBase addAccount");
 
         ContentValues values = accountToContentValues(account);
 
-        SQLiteDatabase db = getWritableDatabase();
-        db.insert(TABLE_ACCOUNTS, null, values);
-        db.close();
+        database.insert(TABLE_ACCOUNTS, null, values);
     }
 
     public Account getAccount(String login) {
@@ -192,8 +139,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         String selection = COLUMN_LOGIN + " = ?";
         String[] selectionArgs = {login};
 
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(
+        Cursor cursor = database.query(
                 TABLE_ACCOUNTS,
                 COLUMNS_ACCOUNTS,
                 selection,
@@ -211,7 +157,6 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return account;
     }
 
@@ -221,8 +166,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         List<Account> accounts = new LinkedList<Account>();
         String query = "SELECT * FROM " + TABLE_ACCOUNTS;
 
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = database.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -232,8 +176,68 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
         return accounts;
+    }
+
+    public synchronized void deleteAccount(long id) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase deleteAccount");
+
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        database.delete(TABLE_ACCOUNTS, selection, selectionArgs);
+    }
+
+    public synchronized void updateAccountByLogin(Account account) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase updateAccountByLogin");
+
+        ContentValues values = accountToContentValues(account);
+
+        String selection = COLUMN_LOGIN + " = ?";
+        String[] selectionArgs = {account.getLogin()};
+
+        database.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
+    }
+
+    public int countAccount() {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase countAccount");
+
+        String query = "SELECT COUNT(*) FROM " + TABLE_ACCOUNTS;
+
+        Cursor cursor = database.rawQuery(query, null);
+
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+
+        cursor.close();
+        return count;
+    }
+
+    public String getLoginById(long id) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getLoginById, "
+                + String.valueOf(id));
+
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        Cursor cursor = database.query(
+                TABLE_ACCOUNTS,
+                new String[] {COLUMN_LOGIN},
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null,
+                null
+        );
+
+        String login = null;
+        if (cursor.moveToFirst()) {
+            login = cursor.getString(0);
+        }
+
+        cursor.close();
+        return login;
     }
 
     private Account extractAccountFromCursor(Cursor cursor) {

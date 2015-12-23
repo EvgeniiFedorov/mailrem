@@ -16,32 +16,13 @@ public class ProcessesManager {
     private static final String UPDATE_SWITCH = "update_switch";
     private static final String NOTIFY_SWITCH = "notify_switch";
     private static final String UPDATE_INTERVAL = "update_interval";
-    private static final String WIFI_ONLY = "use_wifi";
-    private static final String ROUMING_USE = "use_roaming";
+    private static final String WIFI_ONLY = "update_use_wifi";
+    private static final String ROUMING_USE = "update_use_roaming";
 
-    public static void start(Context context) {
-        Log.d(Constants.LOG_TAG, "ProcessesManager start");
-
-        startUpdate(context);
-        startNotify(context);
-    }
-
-    public static void restart(Context context) {
-        Log.d(Constants.LOG_TAG, "ProcessesManager restart");
-
-        stop();
-        start(context);
-    }
-
-    public static void stop() {
-        Log.d(Constants.LOG_TAG, "ProcessesManager stop");
-
-        stopUpdate();
-        stopNotify();
-    }
-
-    public static void startUpdate(Context context) {
+    public static void restartUpdate(Context context) {
         Log.d(Constants.LOG_TAG, "ProcessesManager startUpdate");
+
+        stopUpdate(context);
 
         if (checkStateUpdate(context)) {
             SharedPreferences sharedPreferences
@@ -49,41 +30,48 @@ public class ProcessesManager {
 
             int intervalUpdate = sharedPreferences.getInt(UPDATE_INTERVAL, 0);
 
+            Log.i(Constants.LOG_TAG, "ProcessesManager startUpdate: start update");
             UpdateData.startUpdateProcess(context, intervalUpdate * 1000);
         }
     }
 
 
-    public static void startNotify(Context context) {
+    public static void restartNotify(Context context) {
         Log.d(Constants.LOG_TAG, "ProcessesManager startNotify");
 
+        stopNotify(context);
+
         if (checkStateNotify(context)) {
+            Log.i(Constants.LOG_TAG, "ProcessesManager startNotify: start notify");
             NotifyFromDB.startNotifyProcess(context);
         }
     }
 
-    public static void stopUpdate() {
+    public static void stopUpdate(Context context) {
         Log.d(Constants.LOG_TAG, "ProcessesManager stopUpdate");
 
-        UpdateData.stopUpdate();
+        UpdateData.stopUpdate(context);
     }
 
-    public static void stopNotify() {
+    public static void stopNotify(Context context) {
         Log.d(Constants.LOG_TAG, "ProcessesManager stopNotify");
 
-        NotifyFromDB.stopNotify();
+        NotifyFromDB.stopNotify(context);
     }
 
     private static boolean checkStateUpdate(Context context) {
         Log.d(Constants.LOG_TAG, "ProcessesManager checkStateUpdate");
 
         AccountsDataBase db = AccountsDataBase.getInstance(context);
+        db.open();
 
         if (db.countAccount() == 0) {
             Log.i(Constants.LOG_TAG, "ProcessesManager checkStateUpdate: " +
                     "start update cancel - no account");
             return false;
         }
+
+        db.close();
 
         SharedPreferences sharedPreferences
                 = PreferenceManager.getDefaultSharedPreferences(context);
@@ -98,7 +86,8 @@ public class ProcessesManager {
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork.isConnected();
+
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
 
         if (!isConnected) {
             Log.i(Constants.LOG_TAG, "ProcessesManager checkStateUpdate: " +
@@ -109,8 +98,7 @@ public class ProcessesManager {
         boolean wifiOnly = sharedPreferences.getBoolean(WIFI_ONLY, false);
 
         if (wifiOnly) {
-            boolean isWifi = activeNetwork.getType()
-                    == ConnectivityManager.TYPE_WIFI;
+            boolean isWifi = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
 
             if (!isWifi) {
                 Log.i(Constants.LOG_TAG, "ProcessesManager checkStateUpdate: " +

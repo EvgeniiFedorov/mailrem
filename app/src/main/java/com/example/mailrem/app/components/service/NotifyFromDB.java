@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.mailrem.app.Constants;
@@ -13,6 +14,8 @@ import com.example.mailrem.app.components.Notifications;
 import com.example.mailrem.app.pojo.MessageWrap;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class NotifyFromDB extends BroadcastReceiver {
 
@@ -20,16 +23,19 @@ public class NotifyFromDB extends BroadcastReceiver {
 
     private static volatile boolean stopNotify = false;
 
-    public static void startNotifyProcess(Context context) {
+    private static final Lock lock = new ReentrantLock();
+
+    public static synchronized void startNotifyProcess(Context context) {
         Log.d(Constants.LOG_TAG, "NotifyFromDB startNotifyProcess");
 
-        setNextNotify(context);
+        setNextNotify(context.getApplicationContext());
     }
 
-    public static void stopNotify() {
+    public static synchronized void stopNotify(Context context) {
         Log.d(Constants.LOG_TAG, "NotifyFromDB stopNotify");
 
         stopNotify = true;
+        setNextNotify(context.getApplicationContext());
     }
 
     public NotifyFromDB() {
@@ -55,20 +61,19 @@ public class NotifyFromDB extends BroadcastReceiver {
         public void run() {
             Log.d(Constants.LOG_TAG, "NotifyTread run");
 
-            notifyFromDB(context);
-            setNextNotify(context);
+            if (lock.tryLock()) {
+                try {
+                    notifyFromDB(context);
+                    setNextNotify(context);
+                } finally {
+                    lock.unlock();
+                }
+            }
         }
     }
 
     private static void setNextNotify(Context context) {
         Log.d(Constants.LOG_TAG, "NotifyFromDB setNextNotify");
-
-        if (stopNotify) {
-            Log.i(Constants.LOG_TAG, "NotifyFromDB setNextNotify: update cancel");
-
-            stopNotify = false;
-            return;
-        }
 
         int nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
 
@@ -77,11 +82,23 @@ public class NotifyFromDB extends BroadcastReceiver {
         PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0,
                 intentThis, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmManager = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(pendingThis);
-        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + nextNotifyTime, pendingThis);
+        lock.lock();
+        try {
+            AlarmManager alarmManager = (AlarmManager)
+                    context.getSystemService(Context.ALARM_SERVICE);
+
+            if (Looper.myLooper() == Looper.getMainLooper() && stopNotify) {
+                Log.i(Constants.LOG_TAG, "NotifyFromDB setNextNotify: update cancel");
+
+                alarmManager.cancel(pendingThis);
+                stopNotify = false;
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP,
+                        System.currentTimeMillis() + nextNotifyTime, pendingThis);
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void notifyFromDB(Context context) {

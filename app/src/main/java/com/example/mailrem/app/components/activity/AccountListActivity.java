@@ -44,19 +44,22 @@ public class AccountListActivity extends Activity {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Account account = data.getParcelableExtra(Constants.ACCOUNT_INTENT_FIELD);
-                AccountsDataBase db = AccountsDataBase.getInstance(this);
+                AccountsDataBase dataBase = AccountsDataBase.getInstance(this);
+                dataBase.open();
 
-                if (db.addIfNotExistAccount(account)) {
-                    if (db.countAccount() == 1) {
-                        ProcessesManager.start(this);
+                if (dataBase.addIfNotExistAccount(account)) {
+                    Toast.makeText(this, R.string.account_add_ok, Toast.LENGTH_SHORT)
+                            .show();
 
-                        Toast.makeText(this, R.string.account_add_ok, Toast.LENGTH_SHORT)
-                                .show();
+                    if (dataBase.countAccount() == 1) {
+                        ProcessesManager.restartUpdate(this);
                     }
                 } else {
                     Toast.makeText(this, R.string.account_already_exists, Toast.LENGTH_LONG)
                             .show();
                 }
+
+                dataBase.close();
             }
         }
     }

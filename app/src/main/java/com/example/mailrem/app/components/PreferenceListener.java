@@ -9,6 +9,9 @@ import com.example.mailrem.app.pojo.ProcessesManager;
 public class PreferenceListener implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final String UPDATE = "update_";
+    private static final String NOTIFY = "notify_";
+
     private final Context context;
 
     public PreferenceListener(Context context) {
@@ -21,6 +24,10 @@ public class PreferenceListener implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.d(Constants.LOG_TAG, "PreferenceListener onSharedPreferenceChanged");
 
-        ProcessesManager.restart(context);
+        if (key.startsWith(UPDATE)) {
+            ProcessesManager.restartUpdate(context);
+        } else if (key.startsWith(NOTIFY)) {
+            ProcessesManager.restartNotify(context);
+        }
     }
 }

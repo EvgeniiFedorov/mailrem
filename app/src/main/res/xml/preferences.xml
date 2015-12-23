@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceScreen
-            android:key="notify"
+    <PreferenceCategory
+            android:key="notify_category"
             android:title="Notification"
             android:persistent="false">
 
@@ -26,122 +26,29 @@
                 android:title="Vibration"
                 android:defaultValue="true">
         </CheckBoxPreference>
-    </PreferenceScreen>
+    </PreferenceCategory>
 
-    <PreferenceScreen
-            android:key="schedule"
-            android:title="Schedule notification"
+    <PreferenceCategory
+            android:key="update_category"
+            android:title="Update"
             android:persistent="false">
 
-        <PreferenceScreen
-                android:key="stage_0"
-                android:title="First stage"
-                android:persistent="false">
-
-            <ListPreference
-                    android:key="stage_duration_0"
-                    android:summary="Duration first stage"
-                    android:title="Duration"
-                    android:entries="@array/stage_duration_entries"
-                    android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="1800">
-            </ListPreference>
-
-            <ListPreference
-                    android:key="stage_frequency_0"
-                    android:summary="Frequency of reminder for first stage"
-                    android:title="Frequency"
-                    android:entries="@array/stage_frequency_entries"
-                    android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="600">
-            </ListPreference>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-                android:key="stage_1"
-                android:title="Second stage"
-                android:persistent="false">
-
-            <ListPreference
-                    android:key="stage_duration_1"
-                    android:summary="Duration second stage"
-                    android:title="Duration"
-                    android:entries="@array/stage_duration_entries"
-                    android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="180">
-            </ListPreference>
-
-            <ListPreference
-                    android:key="stage_frequency_1"
-                    android:summary="Frequency of reminder for second stage"
-                    android:title="Frequency"
-                    android:entries="@array/stage_frequency_entries"
-                    android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="60">
-            </ListPreference>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-                android:key="stage_2"
-                android:title="Third stage"
-                android:persistent="false">
-
-            <ListPreference
-                    android:key="stage_duration_2"
-                    android:summary="Duration third stage"
-                    android:title="Duration"
-                    android:entries="@array/stage_duration_entries"
-                    android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="180">
-            </ListPreference>
-
-            <ListPreference
-                    android:key="stage_frequency_2"
-                    android:summary="Frequency of reminder for third stage"
-                    android:title="Frequency"
-                    android:entries="@array/stage_frequency_entries"
-                    android:entryValues="@array/stage_frequency_values"
-                    android:defaultValue="60">
-            </ListPreference>
-        </PreferenceScreen>
-
-        <PreferenceScreen
-                android:key="stage_3"
-                android:title="Forth stage (without notify)"
-                android:persistent="false">
-
-            <ListPreference
-                    android:key="stage_duration_3"
-                    android:summary="Duration forth stage"
-                    android:title="Duration"
-                    android:entries="@array/stage_duration_entries"
-                    android:entryValues="@array/stage_duration_values"
-                    android:defaultValue="180">
-            </ListPreference>
-        </PreferenceScreen>
-    </PreferenceScreen>
-
-    <PreferenceScreen
-            android:key="update"
-            android:title="Update settings"
-            android:persistent="false">
-
-        <CheckBoxPreference
+        <SwitchPreference
                 android:key="update_switch"
                 android:summary="Enable/disable update"
                 android:title="Switch on"
                 android:defaultValue="true">
-        </CheckBoxPreference>
+        </SwitchPreference>
 
         <CheckBoxPreference
-                android:key="use_wifi"
+                android:key="update_use_wifi"
                 android:summary="Update only wifi connection"
                 android:title="WI-FI"
                 android:defaultValue="false">
         </CheckBoxPreference>
 
         <CheckBoxPreference
-                android:key="use_roaming"
+                android:key="update_use_roaming"
                 android:summary="Do not update in roaming"
                 android:title="Roaming"
                 android:defaultValue="true">
@@ -155,5 +62,104 @@
                 android:entryValues="@array/update_frequency_values"
                 android:defaultValue="30">
         </ListPreference>
-    </PreferenceScreen>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:key="schedule_category"
+            android:title="Schedule"
+            android:persistent="false">
+
+        <PreferenceScreen
+                android:key="schedule"
+                android:title="Schedule notification"
+                android:persistent="false">
+
+            <PreferenceCategory
+                    android:key="stage_0"
+                    android:title="First stage"
+                    android:persistent="false">
+
+                <ListPreference
+                        android:key="stage_duration_0"
+                        android:summary="Duration first stage"
+                        android:title="Duration"
+                        android:entries="@array/stage_duration_entries"
+                        android:entryValues="@array/stage_duration_values"
+                        android:defaultValue="1800">
+                </ListPreference>
+
+                <ListPreference
+                        android:key="stage_frequency_0"
+                        android:summary="Frequency of reminder for first stage"
+                        android:title="Frequency"
+                        android:entries="@array/stage_frequency_entries"
+                        android:entryValues="@array/stage_frequency_values"
+                        android:defaultValue="600">
+                </ListPreference>
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                    android:key="stage_1"
+                    android:title="Second stage"
+                    android:persistent="false">
+
+                <ListPreference
+                        android:key="stage_duration_1"
+                        android:summary="Duration second stage"
+                        android:title="Duration"
+                        android:entries="@array/stage_duration_entries"
+                        android:entryValues="@array/stage_duration_values"
+                        android:defaultValue="180">
+                </ListPreference>
+
+                <ListPreference
+                        android:key="stage_frequency_1"
+                        android:summary="Frequency of reminder for second stage"
+                        android:title="Frequency"
+                        android:entries="@array/stage_frequency_entries"
+                        android:entryValues="@array/stage_frequency_values"
+                        android:defaultValue="60">
+                </ListPreference>
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                    android:key="stage_2"
+                    android:title="Third stage"
+                    android:persistent="false">
+
+                <ListPreference
+                        android:key="stage_duration_2"
+                        android:summary="Duration third stage"
+                        android:title="Duration"
+                        android:entries="@array/stage_duration_entries"
+                        android:entryValues="@array/stage_duration_values"
+                        android:defaultValue="180">
+                </ListPreference>
+
+                <ListPreference
+                        android:key="stage_frequency_2"
+                        android:summary="Frequency of reminder for third stage"
+                        android:title="Frequency"
+                        android:entries="@array/stage_frequency_entries"
+                        android:entryValues="@array/stage_frequency_values"
+                        android:defaultValue="60">
+                </ListPreference>
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                    android:key="stage_3"
+                    android:title="Forth stage (without notify)"
+                    android:persistent="false">
+
+                <ListPreference
+                        android:key="stage_duration_3"
+                        android:summary="Duration forth stage"
+                        android:title="Duration"
+                        android:entries="@array/stage_duration_entries"
+                        android:entryValues="@array/stage_duration_values"
+                        android:defaultValue="180">
+                </ListPreference>
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
 </PreferenceScreen>

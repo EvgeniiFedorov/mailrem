@@ -14,11 +14,7 @@ import com.example.mailrem.app.R;
 
 public class MainActivity extends Activity {
 
-    /*private static final String MAIL_HOST = "imap.mail.ru";
-    private static final int SERVER_PORT = 993;
-    private static final String USER_EMAIL = "ttestname1@mail.ru";
-    private static final String USER_PASSWORD = "testpassword";
-    private final static String MAIL_HOST = "imap.mail.ru";
+    /*private final static String MAIL_HOST = "imap.mail.ru";
     private final static int SERVER_PORT = 993;
     private final static String USER_EMAIL = "ttestname1@mail.ru";
     private final static String USER_PASSWORD = "testpassword";
