@@ -39,7 +39,7 @@ public class ListAccounts extends ListFragment
         dataBase = AccountsDataBase.getInstance(getActivity());
         dataBase.open();
 
-        adapter = new SimpleCursorAdapter(getActivity(), R.layout.accouunts_list_view,
+        adapter = new SimpleCursorAdapter(getActivity(), R.layout.accounts_list_view,
                 null, from, to, 0);
         setListAdapter(adapter);
 
@@ -86,7 +86,7 @@ public class ListAccounts extends ListFragment
         AdapterView.AdapterContextMenuInfo adapterInfo;
 
         switch (item.getItemId()) {
-            case R.id.change:
+            case R.id.change_account:
                 adapterInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 String login = dataBase.getLoginById(adapterInfo.id);
 
@@ -96,7 +96,7 @@ public class ListAccounts extends ListFragment
                 startActivityForResult(intent, REQUEST_CODE);
                 return true;
 
-            case R.id.delete:
+            case R.id.delete_account:
                 adapterInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 dataBase.deleteAccount(adapterInfo.id);
 
@@ -129,7 +129,7 @@ public class ListAccounts extends ListFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(Constants.LOG_TAG, "ListAccounts onCreateLoader");
 
-        return new AccountsCursorLoader(getActivity(), dataBase);
+        return new MyCursorLoader<AccountsDataBase>(getActivity(), dataBase);
     }
 
     @Override

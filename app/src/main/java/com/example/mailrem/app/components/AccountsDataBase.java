@@ -12,7 +12,7 @@ import com.example.mailrem.app.pojo.Account;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AccountsDataBase extends SQLiteOpenHelper {
+public class AccountsDataBase extends SQLiteOpenHelper implements Cursorable {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "AccountsBase";
@@ -24,6 +24,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_HOST = "host";
     public static final String COLUMN_PORT = "port";
+    public static final String COLUMN_LAST_DATE = "last_date";
 
     private static final int POSITION_LOGIN = 1;
     private static final int POSITION_PASSWORD = 2;
@@ -31,7 +32,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     private static final int POSITION_PORT = 4;
 
     private static final String[] COLUMNS_ACCOUNTS = {COLUMN_ID, COLUMN_LOGIN,
-            COLUMN_PASSWORD, COLUMN_HOST, COLUMN_PORT};
+            COLUMN_PASSWORD, COLUMN_HOST, COLUMN_PORT, COLUMN_LAST_DATE};
 
     private static final String CREATE_TABLE_ACCOUNTS =
             "CREATE TABLE " + TABLE_ACCOUNTS + "(" +
@@ -39,11 +40,14 @@ public class AccountsDataBase extends SQLiteOpenHelper {
                     COLUMN_LOGIN + " TEXT UNIQUE, " +
                     COLUMN_PASSWORD + " TEXT, " +
                     COLUMN_HOST + " TEXT, " +
-                    COLUMN_PORT + " INTEGER " +
+                    COLUMN_PORT + " INTEGER, " +
+                    COLUMN_LAST_DATE + " TEXT " +
                     ")";
 
     private static final String DELETE_TABLE_ACCOUNTS =
             "DROP TABLE IF EXISTS " + TABLE_ACCOUNTS;
+
+    private static final String ZERO_STRING = "0";
 
     private static final Object lock = new Object();
 
@@ -79,6 +83,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    @Override
     public void open() {
         Log.d(Constants.LOG_TAG, "AccountsDataBase open");
 
@@ -91,6 +96,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         }
     }
 
+    @Override
     public void close() {
         Log.d(Constants.LOG_TAG, "AccountsDataBase close");
 
@@ -104,6 +110,7 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         }
     }
 
+    @Override
     public Cursor getCursor() {
         Log.d(Constants.LOG_TAG, "AccountsDataBase getCursor");
 
@@ -111,11 +118,10 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         return database.rawQuery(query, null);
     }
 
-
     public boolean addIfNotExistAccount(Account account) {
         Log.d(Constants.LOG_TAG, "AccountsDataBase addIfNotExistAccount");
 
-        if (getAccount(account.getLogin()) == null) {
+        if (checkAccount(account)) {
             addAccount(account);
             return true;
         } else {
@@ -129,15 +135,16 @@ public class AccountsDataBase extends SQLiteOpenHelper {
         Log.d(Constants.LOG_TAG, "AccountsDataBase addAccount");
 
         ContentValues values = accountToContentValues(account);
+        values.put(COLUMN_LAST_DATE, ZERO_STRING);
 
         database.insert(TABLE_ACCOUNTS, null, values);
     }
 
-    public Account getAccount(String login) {
-        Log.d(Constants.LOG_TAG, "AccountsDataBase getAccount");
+    public boolean checkAccount(Account account) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase checkAccount");
 
         String selection = COLUMN_LOGIN + " = ?";
-        String[] selectionArgs = {login};
+        String[] selectionArgs = {account.getLogin()};
 
         Cursor cursor = database.query(
                 TABLE_ACCOUNTS,
@@ -150,14 +157,10 @@ public class AccountsDataBase extends SQLiteOpenHelper {
                 null
         );
 
-        Account account = null;
-
-        if (cursor.moveToFirst()) {
-            account = extractAccountFromCursor(cursor);
-        }
+        boolean check = cursor.getCount() == 0;
 
         cursor.close();
-        return account;
+        return check;
     }
 
     public List<Account> getAllAccounts() {
@@ -214,15 +217,14 @@ public class AccountsDataBase extends SQLiteOpenHelper {
     }
 
     public String getLoginById(long id) {
-        Log.d(Constants.LOG_TAG, "AccountsDataBase getLoginById, "
-                + String.valueOf(id));
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getLoginById");
 
         String selection = COLUMN_ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
 
         Cursor cursor = database.query(
                 TABLE_ACCOUNTS,
-                new String[] {COLUMN_LOGIN},
+                new String[]{COLUMN_LOGIN},
                 selection,
                 selectionArgs,
                 null,
@@ -238,6 +240,44 @@ public class AccountsDataBase extends SQLiteOpenHelper {
 
         cursor.close();
         return login;
+    }
+
+    public long getLastDate(Account account) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase getLastDate");
+
+        String selection = COLUMN_LOGIN + " = ?";
+        String[] selectionArgs = {account.getLogin()};
+
+        Cursor cursor = database.query(
+                TABLE_ACCOUNTS,
+                new String[] {COLUMN_LAST_DATE},
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null,
+                null
+        );
+
+        String lastDate = ZERO_STRING;
+        if (cursor.moveToFirst()) {
+            lastDate = cursor.getString(0);
+        }
+
+        cursor.close();
+        return Long.parseLong(lastDate);
+    }
+
+    public void updateLastDate(Account account, long lastDate) {
+        Log.d(Constants.LOG_TAG, "AccountsDataBase updateLastDate");
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LAST_DATE, String.valueOf(lastDate));
+
+        String selection = COLUMN_LOGIN + " = ?";
+        String[] selectionArgs = {account.getLogin()};
+
+        database.update(TABLE_ACCOUNTS, values, selection, selectionArgs);
     }
 
     private Account extractAccountFromCursor(Cursor cursor) {

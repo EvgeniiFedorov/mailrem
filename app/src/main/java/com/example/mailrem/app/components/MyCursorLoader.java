@@ -6,20 +6,20 @@ import android.database.Cursor;
 import android.util.Log;
 import com.example.mailrem.app.Constants;
 
-class MessagesCursorLoader extends CursorLoader {
+class MyCursorLoader<TDataBase extends Cursorable> extends CursorLoader {
 
-    private final MessagesDataBase dataBase;
+    private final TDataBase dataBase;
 
-    public MessagesCursorLoader(Context context, MessagesDataBase dataBase) {
+    public MyCursorLoader(Context context, TDataBase dataBase) {
         super(context);
-        Log.d(Constants.LOG_TAG, "MessagesCursorLoader constructor");
+        Log.d(Constants.LOG_TAG, "MyCursorLoader constructor");
 
         this.dataBase = dataBase;
     }
 
     @Override
     public Cursor loadInBackground() {
-        Log.d(Constants.LOG_TAG, "MessagesCursorLoader loadInBackground");
+        Log.d(Constants.LOG_TAG, "MyCursorLoader loadInBackground");
 
         return dataBase.getCursor();
     }

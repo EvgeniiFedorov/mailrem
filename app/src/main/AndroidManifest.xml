@@ -31,10 +31,16 @@
         </activity>
 
         <activity
+                android:name=".components.activity.MessageViewActivity" />
+
+        <activity
                 android:name=".components.activity.AccountListActivity" />
 
         <activity
                 android:name=".components.activity.LoginActivity" />
+
+        <activity
+                android:name=".components.activity.SpecialWordListActivity" />
 
         <activity
                 android:name=".components.activity.AdvancedLoginActivity" />

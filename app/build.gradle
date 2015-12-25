@@ -5,7 +5,8 @@ android {
     buildToolsVersion "23.0.2"
 
     packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
+        //exclude 'META-INF/LICENSE.txt'
+        pickFirst 'META-INF/LICENSE.txt'
     }
     defaultConfig {
         applicationId "com.example.mailrem.app"
@@ -30,10 +31,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //compile fileTree(dir: 'libs', include: ['*.jar'])  //gnu mail
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.sun.mail:javax.mail:1.5.4'
+
+    compile 'com.sun.mail:android-mail:1.5.5'
+    compile 'com.sun.mail:android-activation:1.5.5'
+
+    //compile 'com.sun.mail:javax.mail:1.5.4'   oracle mail
+
     //compile 'javax.mail:javax.mail-api:1.5.4'
     //compile 'javax.activation:activation:1.1.1'
     //compile 'javax.activation:activation:1.1.1'

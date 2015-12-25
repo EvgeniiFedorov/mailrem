@@ -13,7 +13,7 @@ import com.example.mailrem.app.pojo.ScheduleManager;
 
 import java.util.*;
 
-public class MessagesDataBase extends SQLiteOpenHelper {
+public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MailBase";
@@ -21,8 +21,8 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     private static final String TABLE_MAILS = "Mails";
 
     private static final String COLUMN_ID = "_id";
-    public static final String COLUMN_UID = "uid";
-    public static final String COLUMN_FROM = "from_field";
+    public static final String COLUMN_FROM_NAME = "from_name_field";
+    public static final String COLUMN_FROM_ADDRESS = "from_address_field";
     public static final String COLUMN_TO = "to_field";
     public static final String COLUMN_DATE = "date_field";
     public static final String COLUMN_SUBJECT = "subject_field";
@@ -31,25 +31,24 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     private static final String COLUMN_SCHEDULE = "schedule";
     private static final String COLUMN_BEGIN_STATUS = "begin_status_time";
 
-    private static final int POSITION_UID = 1;
-    private static final int POSITION_FROM = 2;
+    private static final int POSITION_ID = 0;
+    private static final int POSITION_FROM_NAME = 1;
+    private static final int POSITION_FROM_ADDRESS = 2;
     private static final int POSITION_TO = 3;
     private static final int POSITION_DATE = 4;
     private static final int POSITION_SUBJECT = 5;
     private static final int POSITION_BODY = 6;
-    private static final int POSITION_STATUS = 7;
-    private static final int POSITION_SCEDULE = 8;
     private static final int POSITION_BEGIN_STATUS = 9;
 
-    private static final String[] COLUMNS_MAILS = {COLUMN_ID, COLUMN_UID, COLUMN_FROM,
-            COLUMN_TO, COLUMN_DATE, COLUMN_SUBJECT, COLUMN_BODY,
-            COLUMN_STATUS, COLUMN_SCHEDULE, COLUMN_BEGIN_STATUS};
+    private static final String[] COLUMNS_MAILS = {COLUMN_ID, COLUMN_FROM_NAME,
+            COLUMN_FROM_ADDRESS, COLUMN_TO, COLUMN_DATE, COLUMN_SUBJECT,
+            COLUMN_BODY, COLUMN_STATUS, COLUMN_SCHEDULE, COLUMN_BEGIN_STATUS};
 
     private static final String CREATE_TABLE_MAILS =
             "CREATE TABLE " + TABLE_MAILS + "(" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_UID + " INTEGER UNIQUE, " +
-                    COLUMN_FROM + " TEXT, " +
+                    COLUMN_FROM_NAME + " TEXT, " +
+                    COLUMN_FROM_ADDRESS + " TEXT, " +
                     COLUMN_TO + " TEXT, " +
                     COLUMN_DATE + " INTEGER, " +
                     COLUMN_SUBJECT + " TEXT, " +
@@ -102,6 +101,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    @Override
     public void open() {
         Log.d(Constants.LOG_TAG, "MessagesDataBase open");
 
@@ -114,6 +114,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         }
     }
 
+    @Override
     public void close() {
         Log.d(Constants.LOG_TAG, "MessagesDataBase close");
 
@@ -127,6 +128,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         }
     }
 
+    @Override
     public Cursor getCursor() {
         Log.d(Constants.LOG_TAG, "MessagesDataBase getCursor");
 
@@ -137,7 +139,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
     public boolean addIfNotExistMessage(MessageWrap message) {
         Log.d(Constants.LOG_TAG, "MessagesDataBase addIfNotExistMessage");
 
-        if (getMessage(message.getUID()) == null) {
+        if (checkMessage(message)) {
             addMessage(message);
             return true;
         } else {
@@ -163,11 +165,38 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         database.insert(TABLE_MAILS, null, values);
     }
 
-    public MessageWrap getMessage(long uid) {
+    public boolean checkMessage(MessageWrap message) {
+        Log.d(Constants.LOG_TAG, "MessagesDataBase checkMessage");
+
+        String selection = COLUMN_FROM_ADDRESS + " = ? AND "
+                + COLUMN_DATE + " = ? AND "
+                + COLUMN_SUBJECT + " = ?";
+        String[] selectionArgs = {message.getFromAddress(),
+                String.valueOf(dateToInt(message.getDate())),
+                message.getSubject()};
+
+        Cursor cursor = database.query(
+                TABLE_MAILS,
+                COLUMNS_MAILS,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null,
+                null
+        );
+
+        boolean exist = cursor.getCount() == 0;
+
+        cursor.close();
+        return exist;
+    }
+
+    public MessageWrap getMessage(long id) {
         Log.d(Constants.LOG_TAG, "MessagesDataBase getMessage");
 
-        String selection = COLUMN_UID + " = ?";
-        String[] selectionArgs = {String.valueOf(uid)};
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
 
         Cursor cursor = database.query(
                 TABLE_MAILS,
@@ -181,7 +210,6 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         );
 
         MessageWrap message = null;
-
         if (cursor.moveToFirst()) {
             message = extractMessageFromCursor(cursor);
         }
@@ -218,13 +246,14 @@ public class MessagesDataBase extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     MessageWrap message = extractMessageFromCursor(cursor);
+                    long idMessage = cursor.getLong(POSITION_ID);
                     int beginStatusTime = cursor.getInt(POSITION_BEGIN_STATUS);
 
                     if (status != Constants.COUNT_STAGE - 1) {
                         messages.put(message, status);
                     }
 
-                    updateMessage(message, status, beginStatusTime);
+                    updateMessage(message, idMessage, status, beginStatusTime);
                 } while (cursor.moveToNext());
             }
 
@@ -234,16 +263,17 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         return messages;
     }
 
-    private synchronized void deleteMessage(long uid) {
+    public synchronized void deleteMessage(long id) {
         Log.d(Constants.LOG_TAG, "MessagesDataBase deleteMessage");
 
-        String selection = COLUMN_UID + " = ?";
-        String[] selectionArgs = {String.valueOf(uid)};
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
 
         database.delete(TABLE_MAILS, selection, selectionArgs);
     }
 
-    private synchronized void updateMessage(MessageWrap message, int status, int beginStatusTime) {
+    private synchronized void updateMessage(MessageWrap message, long idMessage,
+                                            int status, int beginStatusTime) {
         Log.d(Constants.LOG_TAG, "MessagesDataBase updateMessage");
 
         ContentValues values = messageToContentValues(message);
@@ -260,7 +290,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         }
 
         if (status == Constants.COUNT_STAGE) {
-            deleteMessage(message.getUID());
+            deleteMessage(idMessage);
             return;
         }
 
@@ -268,8 +298,8 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         values.put(COLUMN_SCHEDULE, now);
         values.put(COLUMN_BEGIN_STATUS, newBeginStatusTime);
 
-        String selection = COLUMN_UID + " = ?";
-        String[] selectionArgs = {String.valueOf(message.getUID())};
+        String selection = COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(idMessage)};
 
         database.update(TABLE_MAILS, values, selection, selectionArgs);
     }
@@ -299,7 +329,7 @@ public class MessagesDataBase extends SQLiteOpenHelper {
                     null
             );
 
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToFirst() && cursor.getInt(0) > 0) {
                 if (nextTime > cursor.getInt(0) + scheduleManager.frequencyStage(status)) {
                     nextTime = cursor.getInt(0) + scheduleManager.frequencyStage(status);
                 }
@@ -316,8 +346,8 @@ public class MessagesDataBase extends SQLiteOpenHelper {
 
         MessageWrap message = new MessageWrap();
 
-        message.setUID(cursor.getLong(POSITION_UID));
-        message.setFrom(cursor.getString(POSITION_FROM));
+        message.setFromName(cursor.getString(POSITION_FROM_NAME));
+        message.setFromAddress(cursor.getString(POSITION_FROM_ADDRESS));
         message.setTo(cursor.getString(POSITION_TO));
         message.setDate(intToDate(cursor.getInt(POSITION_DATE)));
         message.setSubject(cursor.getString(POSITION_SUBJECT));
@@ -330,8 +360,8 @@ public class MessagesDataBase extends SQLiteOpenHelper {
         Log.d(Constants.LOG_TAG, "MessagesDataBase messageToContentValues");
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_UID, message.getUID());
-        values.put(COLUMN_FROM, message.getFrom());
+        values.put(COLUMN_FROM_NAME, message.getFromName());
+        values.put(COLUMN_FROM_ADDRESS, message.getFromAddress());
         values.put(COLUMN_TO, message.getTo());
         values.put(COLUMN_DATE, dateToInt(message.getDate()));
         values.put(COLUMN_SUBJECT, message.getSubject());

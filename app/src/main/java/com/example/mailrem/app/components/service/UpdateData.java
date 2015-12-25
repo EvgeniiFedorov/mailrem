@@ -5,29 +5,22 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Looper;
 import android.util.Log;
 
 import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.components.AccountsDataBase;
 import com.example.mailrem.app.components.MessagesDataBase;
-import com.example.mailrem.app.pojo.Account;
-import com.example.mailrem.app.pojo.MailAgent;
-import com.example.mailrem.app.pojo.MessageWrap;
+import com.example.mailrem.app.pojo.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class UpdateData extends BroadcastReceiver {
 
-    private static final String FILE_NAME = "setting";
-    private static final String UID_FIELD = "uid";
-    private static final String UID_INTENT_FIELD = "uid";
     private static final String INTERVAL_INTENT_FIELD = "login";
-
-    private static final String UID_DEFAULT_VALUE = "0";
 
     private static volatile boolean stopUpdate = false;
 
@@ -36,15 +29,14 @@ public class UpdateData extends BroadcastReceiver {
     public static synchronized void startUpdateProcess(Context context, long interval) {
         Log.d(Constants.LOG_TAG, "UpdateData startUpdateProcess");
 
-        long uid = getUIDFromSettings(context);
-        setNextUpdate(context.getApplicationContext(), interval, uid);
+        setNextUpdate(context.getApplicationContext(), interval);
     }
 
     public static synchronized void stopUpdate(Context context) {
         Log.d(Constants.LOG_TAG, "UpdateData stopUpdate");
 
         stopUpdate = true;
-        setNextUpdate(context.getApplicationContext(), 0, 0);
+        setNextUpdate(context.getApplicationContext(), 0);
     }
 
     public UpdateData() {
@@ -74,11 +66,10 @@ public class UpdateData extends BroadcastReceiver {
 
             if (lock.tryLock()) {
                 try {
-                    long uid = intent.getLongExtra(UID_INTENT_FIELD, 0);
                     long interval = intent.getLongExtra(INTERVAL_INTENT_FIELD, 0);
-                    long nextUID = updateDB(context, uid);
+                    updateDB(context);
 
-                    setNextUpdate(context, interval, nextUID);
+                    setNextUpdate(context, interval);
                 } finally {
                     lock.unlock();
                 }
@@ -86,11 +77,10 @@ public class UpdateData extends BroadcastReceiver {
         }
     }
 
-    private static void setNextUpdate(Context context, long interval, long uid) {
+    private static void setNextUpdate(Context context, long interval) {
         Log.d(Constants.LOG_TAG, "UpdateDate setNextUpdate");
 
         Intent intentThis = new Intent(context, UpdateData.class);
-        intentThis.putExtra(UID_INTENT_FIELD, uid);
         intentThis.putExtra(INTERVAL_INTENT_FIELD, interval);
 
         PendingIntent pendingThis = PendingIntent.getBroadcast(context, 0,
@@ -105,7 +95,6 @@ public class UpdateData extends BroadcastReceiver {
                 Log.i(Constants.LOG_TAG, "UpdateDate setNextUpdate: update cancel");
 
                 alarmManager.cancel(pendingThis);
-                setUIDToSettings(context, uid);
                 stopUpdate = false;
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP,
@@ -116,58 +105,57 @@ public class UpdateData extends BroadcastReceiver {
         }
     }
 
-    private long updateDB(Context context, long uid) {
+    private void updateDB(Context context) {
         Log.d(Constants.LOG_TAG, "UpdateDate updateDB");
 
-        try {
-            long nextUID = uid;
+        boolean changeMessageDB = false;
 
+        try {
             MailAgent mailAgent = new MailAgent();
 
-            AccountsDataBase db = AccountsDataBase.getInstance(context);
-            db.open();
+            AccountsDataBase dbAccount = AccountsDataBase.getInstance(context);
+            dbAccount.open();
 
-            List<Account> accounts = db.getAllAccounts();
-            db.close();
+            List<Account> accounts = dbAccount.getAllAccounts();
 
-            MessagesDataBase messagesDataBase = MessagesDataBase.getInstance(context);
+            MessagesDataBase dbMessage = MessagesDataBase.getInstance(context);
+            dbMessage.open();
 
             for (Account account : accounts) {
-                /*mailAgent.connect(account);
-                List<MessageWrap> messagesWrap = mailAgent.getMessagesFromAllFoldersSinceUID(uid);
+                long lastDate = dbAccount.getLastDate(account);
+
+                mailAgent.connect(account);
+                List<MessageWrap> messagesWrap = mailAgent
+                        .getUnreadMessagesFromAllFoldersSinceDate(new Date(lastDate));
                 mailAgent.disconnect();
 
                 for (MessageWrap messageWrap : messagesWrap) {
-                    messagesDataBase.addIfNotExistMessage(messageWrap);
-                    if (messageWrap.getUID() >= nextUID) {
-                        nextUID = messageWrap.getUID() + 1;
+                    if (messageWrap.getDate().getTime() > lastDate) {
+                        lastDate = messageWrap.getDate().getTime();
                     }
-                }*/
+                }
+
+                MessageAnalyzer analyzer = new MessageAnalyzer(context);
+                messagesWrap = analyzer.analyzeMessages(messagesWrap);
+
+                for (MessageWrap messageWrap : messagesWrap) {
+                    if (dbMessage.addIfNotExistMessage(messageWrap)) {
+                        changeMessageDB = true;
+                    }
+                }
+
+                dbAccount.updateLastDate(account, lastDate);
             }
 
-            return nextUID;
+            dbMessage.close();
+            dbAccount.close();
+
+            if (changeMessageDB) {
+                ProcessesManager.restartNotify(context);
+            }
         } catch (Exception e) {
             Log.e(Constants.LOG_TAG, "UpdateDate updateDB: exception - "
                     + e.getMessage());
-
-            return uid;
         }
-    }
-
-    private static long getUIDFromSettings(Context context) {
-        Log.d(Constants.LOG_TAG, "UpdateDate getUIDFromSettings");
-
-        SharedPreferences sPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        String text = sPref.getString(UID_FIELD, UID_DEFAULT_VALUE);
-        return Long.parseLong(text);
-    }
-
-    private static void setUIDToSettings(Context context, long uid) {
-        Log.d(Constants.LOG_TAG, "UpdateDate setUIDToSettings");
-
-        SharedPreferences sPref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sPref.edit();
-        editor.putString(UID_FIELD, Long.toString(uid));
-        editor.apply();
     }
 }

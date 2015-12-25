@@ -9,8 +9,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import android.view.View;
 import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.R;
+import com.example.mailrem.app.components.ListMails;
 
 public class MainActivity extends Activity {
 
@@ -27,7 +29,6 @@ public class MainActivity extends Activity {
     private final static String USER_EMAIL = "ttestname2@yandex.ru";
     private final static String USER_PASSWORD = "testpassword2";*/
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +36,11 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+    }
+
+    public void onClickRefresh(View view) {
+        ListMails fragment = (ListMails) getFragmentManager().findFragmentById(R.id.listMails);
+        fragment.refresh();
     }
 
     @Override
@@ -58,6 +64,10 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.accounts:
                 intent = new Intent(this, AccountListActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.words:
+                intent = new Intent(this, SpecialWordListActivity.class);
                 startActivity(intent);
                 return true;
             default:

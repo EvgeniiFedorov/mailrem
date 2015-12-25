@@ -106,8 +106,11 @@ public class NotifyFromDB extends BroadcastReceiver {
 
         Notifications notifier = new Notifications(context);
         MessagesDataBase db = MessagesDataBase.getInstance(context);
+        db.open();
 
         Map<MessageWrap, Integer> messages = db.getAndUpdateMessagesForNotify();
+        db.close();
+
         notifier.notifyNewMessages(messages);
     }
 
@@ -115,6 +118,10 @@ public class NotifyFromDB extends BroadcastReceiver {
         Log.d(Constants.LOG_TAG, "NotifyFromDB getNextNotifyTime");
 
         MessagesDataBase db = MessagesDataBase.getInstance(context);
-        return 0;//db.nextNotifyTime();
+        db.open();
+
+        int nextNotifyTime = db.nextNotifyTime();
+        db.close();
+        return nextNotifyTime;
     }
 }

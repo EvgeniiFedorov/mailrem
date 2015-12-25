@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:id="@+id/from_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/to_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/date_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/subject_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:id="@+id/body_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:adjustViewBounds="true"
+            android:divider="@drawable/separator"
+            android:dividerPadding="3dp"
+            android:orientation="horizontal"
+            android:showDividers="middle">
+
+        <Button
+                android:id="@+id/button_back_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="@string/button_back_message"
+                android:layout_weight="1"
+                android:textColor="#00b0e4"
+                android:background="#458626"
+                android:onClick="onClickBack"/>
+
+        <Button
+                android:id="@+id/button_ignore_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="@string/button_ignore_message"
+                android:layout_weight="1"
+                android:textColor="#00b0e4"
+                android:background="#458626"
+                android:onClick="onClickIgnore"/>
+
+        <Button
+                android:id="@+id/button_answer_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="@string/button_answer_message"
+                android:layout_weight="1"
+                android:textColor="#00b0e4"
+                android:background="#458626"
+                android:onClick="onClickAnswer"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

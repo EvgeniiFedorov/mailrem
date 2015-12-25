@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/port"
                 android:textColorHint="#cccccc"
-                android:inputType="text"
+                android:inputType="number"
                 android:layout_marginTop="-2dp"
                 android:padding="10dp"
                 android:drawableStart="@mipmap/port"/>

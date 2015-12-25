@@ -11,6 +11,7 @@
     <!-- Menu-->
     <string name="settings_title">Settings</string>
     <string name="accounts_title">Accounts</string>
+    <string name="words_title">Special words</string>
 
     <!--Settings-->
     <string name="settings_label">Settings</string>
@@ -20,6 +21,14 @@
     <string name="empty_account_list">No accounts</string>
     <string name="button_add_account">Add account</string>
     <string name="button_cancel_account">Back</string>
+
+    <string name="button_add_word">Add word</string>
+    <string name="new_word">New word</string>
+    <string name="word_empty">Word is empty</string>
+    <string name="word_already_exists">Word already exists</string>
+    <string name="word_add_ok">Word added</string>
+    <string name="empty_word_list">No special words</string>
+    <string name="context_word_delete">Delete</string>
 
     <string name="login">Login</string>
     <string name="password">Password</string>
@@ -45,5 +54,14 @@
 
     <string name="context_account_change">Change</string>
     <string name="context_account_delete">Delete</string>
+    <string name="button_refresh">Refresh</string>
 
+    <string name="button_ignore_message">Ignore</string>
+    <string name="button_answer_message">Answer</string>
+    <string name="button_back_message">Back</string>
+
+    <string name="button_dialog_yes">Yes</string>
+    <string name="button_dialog_no">Cancel</string>
+    <string name="title_dialog_ignore">Forgot this message</string>
+    <string name="text_dialog_ignore">You are sure</string>
 </resources>

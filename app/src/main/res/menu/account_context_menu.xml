@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/change"
+    <item android:id="@+id/change_account"
           android:title="@string/context_account_change"/>
-    <item android:id="@+id/delete"
+    <item android:id="@+id/delete_account"
           android:title="@string/context_account_delete"/>
 </menu>

@@ -2,6 +2,7 @@ package com.example.mailrem.app.components;
 
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import com.example.mailrem.app.Constants;
 import com.example.mailrem.app.R;
+import com.example.mailrem.app.components.activity.MessageViewActivity;
+import com.example.mailrem.app.pojo.MessageWrap;
 
 public class ListMails extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -24,7 +27,7 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
         Log.d(Constants.LOG_TAG, "ListMails onActivityCreated");
 
         String[] from = new String[]
-                {MessagesDataBase.COLUMN_FROM, MessagesDataBase.COLUMN_SUBJECT};
+                {MessagesDataBase.COLUMN_FROM_NAME, MessagesDataBase.COLUMN_SUBJECT};
         int[] to = new int[]{R.id.from, R.id.subject};
 
         setEmptyText(getResources().getString(R.string.empty_mail_list));
@@ -60,13 +63,23 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         Log.d(Constants.LOG_TAG, "ListMails onListItemClick");
+
+        long idMessage = getListAdapter().getItemId(position);
+        MessageWrap message = dataBase.getMessage(idMessage);
+
+        if (message != null) {
+            Intent intent = new Intent(getActivity(), MessageViewActivity.class);
+            intent.putExtra(Constants.MESSAGE_INTENT_FIELD, message);
+            intent.putExtra(Constants.MESSAGE_ID_INTENT_FIELD, idMessage);
+            startActivity(intent);
+        }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(Constants.LOG_TAG, "ListMails onCreateLoader");
 
-        return new MessagesCursorLoader(getActivity(), dataBase);
+        return new MyCursorLoader<MessagesDataBase>(getActivity(), dataBase);
     }
 
     @Override
@@ -83,7 +96,7 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
         adapter.swapCursor(null);
     }
 
-    private void refresh() {
+    public void refresh() {
         Log.d(Constants.LOG_TAG, "ListMails refresh");
 
         getLoaderManager().getLoader(0).forceLoad();

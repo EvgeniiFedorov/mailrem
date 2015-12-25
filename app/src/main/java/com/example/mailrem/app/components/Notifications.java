@@ -70,7 +70,7 @@ public class Notifications {
         inboxStyle.setBigContentTitle("Not answered messages");
 
         for (MessageWrap message : messages) {
-            inboxStyle.addLine(message.getFrom() + " " + message.getSubject());
+            inboxStyle.addLine(message.getFromName() + " " + message.getSubject());
         }
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
