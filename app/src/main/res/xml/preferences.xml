@@ -85,7 +85,7 @@
                         android:title="Duration"
                         android:entries="@array/stage_duration_entries"
                         android:entryValues="@array/stage_duration_values"
-                        android:defaultValue="1800">
+                        android:defaultValue="12">
                 </ListPreference>
 
                 <ListPreference
@@ -94,7 +94,7 @@
                         android:title="Frequency"
                         android:entries="@array/stage_frequency_entries"
                         android:entryValues="@array/stage_frequency_values"
-                        android:defaultValue="600">
+                        android:defaultValue="60">
                 </ListPreference>
             </PreferenceCategory>
 
@@ -109,7 +109,7 @@
                         android:title="Duration"
                         android:entries="@array/stage_duration_entries"
                         android:entryValues="@array/stage_duration_values"
-                        android:defaultValue="180">
+                        android:defaultValue="12">
                 </ListPreference>
 
                 <ListPreference
@@ -133,7 +133,7 @@
                         android:title="Duration"
                         android:entries="@array/stage_duration_entries"
                         android:entryValues="@array/stage_duration_values"
-                        android:defaultValue="180">
+                        android:defaultValue="12">
                 </ListPreference>
 
                 <ListPreference
@@ -157,7 +157,7 @@
                         android:title="Duration"
                         android:entries="@array/stage_duration_entries"
                         android:entryValues="@array/stage_duration_values"
-                        android:defaultValue="180">
+                        android:defaultValue="12">
                 </ListPreference>
             </PreferenceCategory>
         </PreferenceScreen>

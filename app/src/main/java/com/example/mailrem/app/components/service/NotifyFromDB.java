@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class NotifyFromDB extends BroadcastReceiver {
 
-    private static final int DELAY_NOTIFY = 10 * 1000;
+    private static final int DELAY_NOTIFY = 10;
 
     private static volatile boolean stopNotify = false;
 
@@ -94,7 +94,7 @@ public class NotifyFromDB extends BroadcastReceiver {
                 int nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
 
                 alarmManager.set(AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + nextNotifyTime, pendingThis);
+                        System.currentTimeMillis() + nextNotifyTime * 1000, pendingThis);
             }
         } finally {
             lock.unlock();

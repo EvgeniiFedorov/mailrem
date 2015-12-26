@@ -32,7 +32,7 @@ public class ProcessesManager {
             int intervalUpdate = Integer.parseInt(interval);
 
             Log.i(Constants.LOG_TAG, "ProcessesManager startUpdate: start update");
-            UpdateData.startUpdateProcess(context, intervalUpdate * 1000);
+            UpdateData.startUpdateProcess(context, intervalUpdate * 60 * 1000);
         }
     }
 

@@ -38,7 +38,7 @@ dependencies {
     compile 'com.sun.mail:android-mail:1.5.5'
     compile 'com.sun.mail:android-activation:1.5.5'
 
-    //compile 'com.sun.mail:javax.mail:1.5.4'   oracle mail
+    //compile 'com.sun.mail:javax.mail:1.5.4'   //oracle mail
 
     //compile 'javax.mail:javax.mail-api:1.5.4'
     //compile 'javax.activation:activation:1.1.1'

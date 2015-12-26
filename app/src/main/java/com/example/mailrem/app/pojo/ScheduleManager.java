@@ -34,6 +34,6 @@ public class ScheduleManager {
         Log.d(Constants.LOG_TAG, "ScheduleManager durationStage");
 
         String duration = sharedPreferences.getString(DURATION_STAGE + status, "err");
-        return 60 * Integer.parseInt(duration);
+        return 60 * 60 * Integer.parseInt(duration);
     }
 }
