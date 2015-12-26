@@ -37,7 +37,7 @@ public class LoadSpecialWords {
                     parser.next();
                     String word = parser.getText();
 
-                    wordList.add(word.toLowerCase());
+                    wordList.add(word);
                 }
                 parser.next();
             }

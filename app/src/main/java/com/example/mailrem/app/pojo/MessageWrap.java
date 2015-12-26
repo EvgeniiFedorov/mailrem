@@ -9,6 +9,7 @@ import java.util.Date;
 
 public class MessageWrap implements Parcelable {
 
+    private long id;
     private String fromName;
     private String fromAddress;
     private String to;
@@ -23,12 +24,21 @@ public class MessageWrap implements Parcelable {
     public MessageWrap(Parcel parcel) {
         Log.d(Constants.LOG_TAG, "MessageWrap constructor");
 
+        id = parcel.readLong();
         fromName = parcel.readString();
         fromAddress = parcel.readString();
         to = parcel.readString();
         date = new Date(parcel.readLong());
         subject = parcel.readString();
         body = parcel.readString();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getFromName() {
@@ -90,6 +100,7 @@ public class MessageWrap implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         Log.d(Constants.LOG_TAG, "MessageWrap writeToParcel");
 
+        dest.writeLong(id);
         dest.writeString(fromName);
         dest.writeString(fromAddress);
         dest.writeString(to);

@@ -14,6 +14,7 @@ public final class MessageExtract {
     private final static String ERROR_STRING = "error in read message";
     private final static String TEXT_NOT_FOUND = "Text not found";
     private final static String SUBJECT_NOT_FOUND = "Subject not found";
+    private final static String UNDEFINED = "undefined";
 
     public static MessageWrap messageWrapping(Message message) {
         Log.d(Constants.LOG_TAG, "MessageExtract messageWrapping");
@@ -57,7 +58,7 @@ public final class MessageExtract {
             if (internetAddress.getPersonal() != null) {
                 return internetAddress.getPersonal();
             } else {
-                return "undefined";
+                return UNDEFINED;
             }
         } catch (MessagingException e) {
             Log.e(Constants.LOG_TAG, e.getMessage());
@@ -80,7 +81,7 @@ public final class MessageExtract {
             if (internetAddress.getAddress() != null) {
                 return internetAddress.getAddress();
             } else {
-                return "undefined";
+                return UNDEFINED;
             }
         } catch (MessagingException e) {
             Log.e(Constants.LOG_TAG, e.getMessage());

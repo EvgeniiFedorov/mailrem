@@ -70,7 +70,6 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
     private SQLiteDatabase database;
     private static int countOpenConnection = 0;
 
-
     public static synchronized MessagesDataBase getInstance(Context context) {
         if (instance == null) {
             instance = new MessagesDataBase(context.getApplicationContext());
@@ -246,14 +245,13 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
             if (cursor.moveToFirst()) {
                 do {
                     MessageWrap message = extractMessageFromCursor(cursor);
-                    long idMessage = cursor.getLong(POSITION_ID);
                     int beginStatusTime = cursor.getInt(POSITION_BEGIN_STATUS);
 
                     if (status != Constants.COUNT_STAGE - 1) {
                         messages.put(message, status);
                     }
 
-                    updateMessage(message, idMessage, status, beginStatusTime);
+                    updateMessage(message, status, beginStatusTime);
                 } while (cursor.moveToNext());
             }
 
@@ -272,8 +270,8 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
         database.delete(TABLE_MAILS, selection, selectionArgs);
     }
 
-    private synchronized void updateMessage(MessageWrap message, long idMessage,
-                                            int status, int beginStatusTime) {
+    private synchronized void updateMessage(MessageWrap message, int status,
+                                            int beginStatusTime) {
         Log.d(Constants.LOG_TAG, "MessagesDataBase updateMessage");
 
         ContentValues values = messageToContentValues(message);
@@ -290,7 +288,7 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
         }
 
         if (status == Constants.COUNT_STAGE) {
-            deleteMessage(idMessage);
+            deleteMessage(message.getId());
             return;
         }
 
@@ -299,7 +297,7 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
         values.put(COLUMN_BEGIN_STATUS, newBeginStatusTime);
 
         String selection = COLUMN_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(idMessage)};
+        String[] selectionArgs = {String.valueOf(message.getId())};
 
         database.update(TABLE_MAILS, values, selection, selectionArgs);
     }
@@ -346,6 +344,7 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
 
         MessageWrap message = new MessageWrap();
 
+        message.setId(Long.parseLong(cursor.getString(POSITION_ID)));
         message.setFromName(cursor.getString(POSITION_FROM_NAME));
         message.setFromAddress(cursor.getString(POSITION_FROM_ADDRESS));
         message.setTo(cursor.getString(POSITION_TO));

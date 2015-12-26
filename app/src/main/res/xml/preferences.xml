@@ -17,7 +17,7 @@
                 android:key="notify_sound"
                 android:summary="Enable/disable sound in notifications"
                 android:title="Sound"
-                android:defaultValue="true">
+                android:defaultValue="false">
         </CheckBoxPreference>
 
         <CheckBoxPreference

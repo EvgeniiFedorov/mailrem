@@ -173,7 +173,7 @@ public class SpecialWordsDataBase extends SQLiteOpenHelper implements Cursorable
         if (cursor.moveToFirst()) {
             do {
                 String word = cursor.getString(POSITION_WORD);
-                words.add(word);
+                words.add(word.toLowerCase());
             } while (cursor.moveToNext());
         }
 

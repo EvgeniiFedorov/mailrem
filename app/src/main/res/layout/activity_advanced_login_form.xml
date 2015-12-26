@@ -23,7 +23,7 @@
                 android:textColorHint="#cccccc"
                 android:inputType="text"
                 android:padding="10dp"
-                android:drawableStart="@mipmap/host"/>
+                android:drawableStart="@mipmap/server"/>
 
         <EditText
                 android:id="@+id/port"

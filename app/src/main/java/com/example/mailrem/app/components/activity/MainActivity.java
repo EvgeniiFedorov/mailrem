@@ -39,7 +39,8 @@ public class MainActivity extends Activity {
     }
 
     public void onClickRefresh(View view) {
-        ListMails fragment = (ListMails) getFragmentManager().findFragmentById(R.id.listMails);
+        ListMails fragment = (ListMails) getFragmentManager()
+                .findFragmentById(R.id.listMails);
         fragment.refresh();
     }
 

@@ -42,7 +42,7 @@ public class MessageAnalyzer {
 
         String[] wordInMessage = message.getBody().split(DELIMITER);
         for (String word : wordInMessage) {
-            if (specialWords.contains(word)) {
+            if (specialWords.contains(word.toLowerCase())) {
                 return true;
             }
         }
@@ -54,6 +54,6 @@ public class MessageAnalyzer {
             }
         }
 
-        return true;//false;
+        return false;
     }
 }

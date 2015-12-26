@@ -17,8 +17,8 @@ import com.example.mailrem.app.pojo.MessageWrap;
 
 public class MessageViewActivity extends Activity {
 
-    MessageWrap message;
-    long idMessage;
+    private static final String MESSAGE_TYPE = "message/rfc822";
+    private MessageWrap message;
 
     private TextView from;
     private TextView to;
@@ -42,7 +42,6 @@ public class MessageViewActivity extends Activity {
         Intent intent = getIntent();
 
         message = intent.getParcelableExtra(Constants.MESSAGE_INTENT_FIELD);
-        idMessage = intent.getLongExtra(Constants.MESSAGE_ID_INTENT_FIELD, 0);
     }
 
     @Override
@@ -63,16 +62,17 @@ public class MessageViewActivity extends Activity {
 
     public void onClickAnswer(View view) {
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("message/rfc822");
+        intent.setType(MESSAGE_TYPE);
 
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{message.getFromAddress()});
         intent.putExtra(Intent.EXTRA_SUBJECT, "Re: " + message.getSubject());
         intent.putExtra(Intent.EXTRA_TEXT, "--- Last message ---\n" + message.getBody());
 
         try {
-            startActivity(Intent.createChooser(intent, "Choose an Email client"));
+            startActivity(Intent.createChooser(intent,
+                    getString(R.string.choose_email_client)));
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "Not client", Toast.LENGTH_LONG)
+            Toast.makeText(this, R.string.not_client, Toast.LENGTH_LONG)
                     .show();
         }
     }
@@ -85,9 +85,10 @@ public class MessageViewActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                MessagesDataBase db = MessagesDataBase.getInstance(getBaseContext());
+                                MessagesDataBase db = MessagesDataBase
+                                        .getInstance(getBaseContext());
                                 db.open();
-                                db.deleteMessage(idMessage);
+                                db.deleteMessage(message.getId());
                                 db.close();
 
                                 dialog.dismiss();

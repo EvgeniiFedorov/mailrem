@@ -16,7 +16,8 @@ import com.example.mailrem.app.R;
 import com.example.mailrem.app.components.activity.MessageViewActivity;
 import com.example.mailrem.app.pojo.MessageWrap;
 
-public class ListMails extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ListMails extends ListFragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private SimpleCursorAdapter adapter;
     private MessagesDataBase dataBase;
@@ -70,7 +71,6 @@ public class ListMails extends ListFragment implements LoaderManager.LoaderCallb
         if (message != null) {
             Intent intent = new Intent(getActivity(), MessageViewActivity.class);
             intent.putExtra(Constants.MESSAGE_INTENT_FIELD, message);
-            intent.putExtra(Constants.MESSAGE_ID_INTENT_FIELD, idMessage);
             startActivity(intent);
         }
     }
