@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <ImageView
+            android:id="@+id/icon"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="2dp"
+            android:src="@mipmap/accounts" >
+    </ImageView>
 
     <TextView
             android:id="@+id/login"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_medium_material"/>
+            android:layout_height="33dp"
+            android:textSize="@dimen/abc_text_size_large_material"
+            android:textColor="@color/text_view_text"/>
 
 </LinearLayout>

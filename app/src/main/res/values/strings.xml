@@ -66,4 +66,9 @@
     <string name="button_dialog_no">Cancel</string>
     <string name="title_dialog_ignore">Forgot this message</string>
     <string name="text_dialog_ignore">You are sure</string>
+    <string name="message_body">Body:  </string>
+    <string name="message_subject">Subject:  </string>
+    <string name="message_date">Date:  </string>
+    <string name="message_to">To:  </string>
+    <string name="message_from">From:  </string>
 </resources>

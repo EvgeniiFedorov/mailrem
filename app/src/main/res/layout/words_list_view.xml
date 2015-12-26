@@ -7,7 +7,8 @@
     <TextView
             android:id="@+id/word"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_medium_material"/>
+            android:layout_height="30dp"
+            android:textSize="@dimen/abc_text_size_large_material"
+            android:textColor="@color/text_view_text"/>
 
 </LinearLayout>

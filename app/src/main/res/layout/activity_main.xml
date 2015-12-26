@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@mipmap/fon">
 
     <fragment android:id="@+id/listMails"
               android:name="com.example.mailrem.app.components.ListMails"
@@ -21,9 +22,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/button_refresh"
-                android:textColor="#00b0e4"
-                android:background="#458626"
-                android:onClick="onClickRefresh"/>
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
+                android:onClick="onClickRefresh"
+                android:drawableStart="@mipmap/refresh"/>
 
     </LinearLayout>
 </RelativeLayout>

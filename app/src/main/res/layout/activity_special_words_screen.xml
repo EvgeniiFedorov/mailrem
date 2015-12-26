@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@mipmap/fon">
 
     <fragment
             android:id="@+id/list_special_words"
@@ -22,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/new_word"
-                android:textColorHint="#cccccc"
+                android:textColorHint="@color/edit_text_hint"
                 android:inputType="text"
                 android:layout_weight="1"
                 android:padding="10dp"/>
@@ -33,9 +34,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/button_add_word"
                 android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
-                android:onClick="onClickAddWord"/>
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
+                android:onClick="onClickAddWord"
+                android:drawableStart="@mipmap/add"/>
 
     </LinearLayout>
 

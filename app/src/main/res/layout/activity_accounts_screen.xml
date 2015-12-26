@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@mipmap/fon">
 
     <fragment
             android:id="@+id/list_accounts"
@@ -17,7 +18,7 @@
             android:gravity="center"
             android:adjustViewBounds="true"
             android:divider="@drawable/separator"
-            android:dividerPadding="3dp"
+            android:dividerPadding="5dp"
             android:orientation="horizontal"
             android:showDividers="middle">
 
@@ -28,9 +29,10 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button_cancel_account"
                 android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
-                android:onClick="onClickCancel"/>
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
+                android:onClick="onClickCancel"
+                android:drawableStart="@mipmap/back"/>
 
         <Button
                 android:id="@+id/button_add_account"
@@ -39,9 +41,10 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button_add_account"
                 android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
-                android:onClick="onClickAddAccount"/>
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
+                android:onClick="onClickAddAccount"
+                android:drawableStart="@mipmap/add"/>
 
     </LinearLayout>
 

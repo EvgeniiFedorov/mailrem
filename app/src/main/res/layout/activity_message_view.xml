@@ -2,37 +2,109 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@mipmap/fon">
 
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <TextView
-                android:id="@+id/from_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-        <TextView
-                android:id="@+id/to_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/help_text_view"
+                    android:text="@string/message_from"/>
 
-        <TextView
-                android:id="@+id/date_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                    android:id="@+id/from_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textColor="@color/text_view_text"/>
 
-        <TextView
-                android:id="@+id/subject_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+        </LinearLayout>
 
-        <TextView
-                android:id="@+id/body_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/help_text_view"
+                    android:text="@string/message_to"/>
+
+            <TextView
+                    android:id="@+id/to_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textColor="@color/text_view_text"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/help_text_view"
+                    android:text="@string/message_date"/>
+
+            <TextView
+                    android:id="@+id/date_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textColor="@color/text_view_text"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/help_text_view"
+                    android:text="@string/message_subject"/>
+
+            <TextView
+                    android:id="@+id/subject_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_view_text"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/help_text_view"
+                    android:text="@string/message_body"/>
+
+            <TextView
+                    android:id="@+id/body_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_view_text"/>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -55,8 +127,8 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button_back_message"
                 android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
                 android:onClick="onClickBack"/>
 
         <Button
@@ -66,8 +138,8 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button_ignore_message"
                 android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
                 android:onClick="onClickIgnore"/>
 
         <Button
@@ -77,8 +149,8 @@
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button_answer_message"
                 android:layout_weight="1"
-                android:textColor="#00b0e4"
-                android:background="#458626"
+                android:textColor="@color/button_text"
+                android:background="@color/button_background"
                 android:onClick="onClickAnswer"/>
 
     </LinearLayout>

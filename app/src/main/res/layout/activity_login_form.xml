@@ -6,7 +6,7 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                android:background="#567375">
+                android:background="@mipmap/fon">
 
     <LinearLayout
             android:orientation="vertical"
@@ -20,21 +20,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login"
-                android:textColorHint="#cccccc"
+                android:textColorHint="@color/edit_text_hint"
                 android:inputType="text"
                 android:padding="10dp"
-                android:drawableStart="@mipmap/e_mail"/>
+                android:drawableStart="@mipmap/e_mail"
+                android:background="@color/edit_text_background"
+                android:textColor="@color/edit_text_text"/>
+
 
         <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password"
-                android:textColorHint="#cccccc"
+                android:textColorHint="@color/edit_text_hint"
                 android:inputType="textPassword"
                 android:layout_marginTop="-2dp"
                 android:padding="10dp"
-                android:drawableStart="@mipmap/password"/>
+                android:drawableStart="@mipmap/password"
+                android:background="@color/edit_text_background"
+                android:textColor="@color/edit_text_text"/>
+
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -49,6 +55,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/text_view_text"
                     android:text="@string/enter_host_and_port"/>
 
         </LinearLayout>
@@ -67,7 +74,8 @@
                     android:padding="10dp"
                     android:layout_margin="4dp"
                     android:text="@string/cancel"
-                    android:onClick="onClickButtonCancel"/>
+                    android:onClick="onClickButtonCancel"
+                    android:textColor="@color/button_text"/>
 
             <Button
                     android:id="@+id/button_sign_in"
@@ -78,7 +86,8 @@
                     android:padding="10dp"
                     android:layout_margin="4dp"
                     android:text="@string/sign_in"
-                    android:onClick="onClickButtonSignIn"/>
+                    android:onClick="onClickButtonSignIn"
+                    android:textColor="@color/button_text"/>
 
         </LinearLayout>
 

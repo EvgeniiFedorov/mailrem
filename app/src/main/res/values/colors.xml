@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="button_text">@color/primary_material_dark</color>
+    <color name="button_background">@color/bright_foreground_disabled_material_dark</color>
+    <color name="text_view_text">@color/primary_material_dark</color>
+    <color name="help_text_view">#ff385555</color>
+    <color name="edit_text_hint">#ffa90014</color>
+    <color name="edit_text_text">@color/primary_material_dark</color>
+    <color name="edit_text_background">@android:color/white</color>\
+</resources>
