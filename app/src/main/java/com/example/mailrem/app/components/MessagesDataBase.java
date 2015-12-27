@@ -61,7 +61,7 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
     private static final String DELETE_TABLE_MAILS =
             "DROP TABLE IF EXISTS " + TABLE_MAILS;
 
-    private static final int DEFAULT_NEXT_NOTIFY_TIME = 24 * 60 * 60 * 1000;
+    private static final int DEFAULT_NEXT_NOTIFY_TIME = 24 * 60 * 60;
 
     private static final Object lock = new Object();
 
@@ -287,26 +287,25 @@ public class MessagesDataBase extends SQLiteOpenHelper implements Cursorable{
             newBeginStatusTime = now;
         }
 
-        if (status == Constants.COUNT_STAGE) {
+        if (newStatus == Constants.COUNT_STAGE) {
             deleteMessage(message.getId());
-            return;
+        } else {
+            values.put(COLUMN_STATUS, newStatus);
+            values.put(COLUMN_SCHEDULE, now);
+            values.put(COLUMN_BEGIN_STATUS, newBeginStatusTime);
+
+            String selection = COLUMN_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(message.getId())};
+
+            database.update(TABLE_MAILS, values, selection, selectionArgs);
         }
-
-        values.put(COLUMN_STATUS, newStatus);
-        values.put(COLUMN_SCHEDULE, now);
-        values.put(COLUMN_BEGIN_STATUS, newBeginStatusTime);
-
-        String selection = COLUMN_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(message.getId())};
-
-        database.update(TABLE_MAILS, values, selection, selectionArgs);
     }
 
     public int nextNotifyTime() {
         Log.d(Constants.LOG_TAG, "MessagesDataBase nextNotifyTime");
 
         ScheduleManager scheduleManager = new ScheduleManager(context);
-        int nextTime = DEFAULT_NEXT_NOTIFY_TIME;
+        int nextTime = dateToInt(new Date()) + DEFAULT_NEXT_NOTIFY_TIME;
 
         for (int status = Constants.START_STAGE;
              status < Constants.COUNT_STAGE; ++status) {

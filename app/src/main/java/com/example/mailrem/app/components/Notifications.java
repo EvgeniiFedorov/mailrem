@@ -77,10 +77,13 @@ public class Notifications {
                 switch (status) {
                     case 0:
                         builder.setSmallIcon(R.mipmap.notify_lv1);
+                        break;
                     case 1:
                         builder.setSmallIcon(R.mipmap.notify_lv2);
+                        break;
                     case 2:
                         builder.setSmallIcon(R.mipmap.notify_lv3);
+                        break;
                     default:
                 }
 

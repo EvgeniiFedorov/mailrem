@@ -20,7 +20,7 @@ public class ProcessesManager {
     private static final String ROUMING_USE = "update_use_roaming";
 
     public static void restartUpdate(Context context) {
-        Log.d(Constants.LOG_TAG, "ProcessesManager startUpdate");
+        Log.d(Constants.LOG_TAG, "ProcessesManager restartUpdate");
 
         stopUpdate(context);
 
@@ -31,19 +31,19 @@ public class ProcessesManager {
             String interval = sharedPreferences.getString(UPDATE_INTERVAL, "err");
             int intervalUpdate = Integer.parseInt(interval);
 
-            Log.i(Constants.LOG_TAG, "ProcessesManager startUpdate: start update");
+            Log.i(Constants.LOG_TAG, "ProcessesManager restartUpdate: start update");
             UpdateData.startUpdateProcess(context, intervalUpdate * 60 * 1000);
         }
     }
 
 
     public static void restartNotify(Context context) {
-        Log.d(Constants.LOG_TAG, "ProcessesManager startNotify");
+        Log.d(Constants.LOG_TAG, "ProcessesManager restartNotify");
 
         stopNotify(context);
 
         if (checkStateNotify(context)) {
-            Log.i(Constants.LOG_TAG, "ProcessesManager startNotify: start notify");
+            Log.i(Constants.LOG_TAG, "ProcessesManager restartNotify: start notify");
             NotifyFromDB.startNotifyProcess(context);
         }
     }

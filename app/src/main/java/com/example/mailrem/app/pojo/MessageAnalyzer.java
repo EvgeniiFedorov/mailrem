@@ -10,7 +10,7 @@ import java.util.List;
 
 public class MessageAnalyzer {
 
-    private static final String DELIMITER = "[ .,:?!]+";
+    private static final String DELIMITER = "\\W+";
 
     private final List<String> specialWords;
 

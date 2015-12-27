@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Looper;
 import android.util.Log;
 
 import com.example.mailrem.app.Constants;
@@ -22,7 +21,7 @@ public class UpdateData extends BroadcastReceiver {
 
     private static final String INTERVAL_INTENT_FIELD = "login";
 
-    private static volatile boolean stopUpdate = false;
+    private static volatile Thread stopThread = null;
 
     private static final Lock lock = new ReentrantLock();
 
@@ -35,7 +34,7 @@ public class UpdateData extends BroadcastReceiver {
     public static synchronized void stopUpdate(Context context) {
         Log.d(Constants.LOG_TAG, "UpdateData stopUpdate");
 
-        stopUpdate = true;
+        stopThread = Thread.currentThread();
         setNextUpdate(context.getApplicationContext(), 0);
     }
 
@@ -91,11 +90,11 @@ public class UpdateData extends BroadcastReceiver {
             AlarmManager alarmManager = (AlarmManager)
                     context.getSystemService(Context.ALARM_SERVICE);
 
-            if (Looper.myLooper() == Looper.getMainLooper() && stopUpdate) {
+            if (Thread.currentThread() == stopThread) {
                 Log.i(Constants.LOG_TAG, "UpdateDate setNextUpdate: update cancel");
 
                 alarmManager.cancel(pendingThis);
-                stopUpdate = false;
+                stopThread = null;
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP,
                         System.currentTimeMillis() + interval, pendingThis);

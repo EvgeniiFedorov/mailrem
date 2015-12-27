@@ -71,6 +71,13 @@ public class MessageViewActivity extends Activity {
         try {
             startActivity(Intent.createChooser(intent,
                     getString(R.string.choose_email_client)));
+
+            MessagesDataBase db = MessagesDataBase.getInstance(getBaseContext());
+            db.open();
+            db.deleteMessage(message.getId());
+            db.close();
+
+            finish();
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.not_client, Toast.LENGTH_LONG)
                     .show();

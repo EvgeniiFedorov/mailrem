@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Looper;
 import android.util.Log;
 
 import com.example.mailrem.app.Constants;
@@ -21,7 +20,7 @@ public class NotifyFromDB extends BroadcastReceiver {
 
     private static final int DELAY_NOTIFY = 10;
 
-    private static volatile boolean stopNotify = false;
+    private static volatile long stopThread;
 
     private static final Lock lock = new ReentrantLock();
 
@@ -34,7 +33,7 @@ public class NotifyFromDB extends BroadcastReceiver {
     public static synchronized void stopNotify(Context context) {
         Log.d(Constants.LOG_TAG, "NotifyFromDB stopNotify");
 
-        stopNotify = true;
+        stopThread = Thread.currentThread().getId();
         setNextNotify(context.getApplicationContext());
     }
 
@@ -85,16 +84,17 @@ public class NotifyFromDB extends BroadcastReceiver {
             AlarmManager alarmManager = (AlarmManager)
                     context.getSystemService(Context.ALARM_SERVICE);
 
-            if (Looper.myLooper() == Looper.getMainLooper() && stopNotify) {
+            if (Thread.currentThread().getId() == stopThread) {
                 Log.i(Constants.LOG_TAG, "NotifyFromDB setNextNotify: notify cancel");
 
-                alarmManager.cancel(pendingThis);
-                stopNotify = false;
-            } else {
-                int nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
+                stopThread = 0;
 
-                alarmManager.set(AlarmManager.RTC_WAKEUP,
-                        System.currentTimeMillis() + nextNotifyTime * 1000, pendingThis);
+                alarmManager.cancel(pendingThis);
+            } else {
+                long nextNotifyTime = getNextNotifyTime(context) + DELAY_NOTIFY;
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, nextNotifyTime * 1000,
+                        pendingThis);
             }
         } finally {
             lock.unlock();
