@@ -150,7 +150,8 @@ public class UpdateData extends BroadcastReceiver {
             dbAccount.close();
 
             if (changeMessageDB) {
-                ProcessesManager.restartNotify(context);
+                Intent intent = new Intent(context, RestartNotifyFromUI.class);
+                context.sendBroadcast(intent);
             }
         } catch (Exception e) {
             Log.e(Constants.LOG_TAG, "UpdateDate updateDB: exception - "

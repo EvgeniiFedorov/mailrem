@@ -63,6 +63,9 @@
                 android:name=".components.service.UpdateData"/>
 
         <receiver
+                android:name=".components.service.RestartNotifyFromUI"/>
+
+        <receiver
                 android:name=".components.service.NotifyFromDB"/>
 
     </application>
