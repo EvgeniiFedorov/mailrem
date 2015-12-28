@@ -11,6 +11,7 @@ public class PreferenceListener implements
 
     private static final String UPDATE = "update_";
     private static final String NOTIFY = "notify_";
+    private static final String STAGE = "stage_";
 
     private final Context context;
 
@@ -26,7 +27,7 @@ public class PreferenceListener implements
 
         if (key.startsWith(UPDATE)) {
             ProcessesManager.restartUpdate(context);
-        } else if (key.startsWith(NOTIFY)) {
+        } else if (key.startsWith(NOTIFY) || key.startsWith(STAGE)) {
             ProcessesManager.restartNotify(context);
         }
     }

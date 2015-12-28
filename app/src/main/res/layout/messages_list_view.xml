@@ -9,13 +9,15 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:textSize="@dimen/abc_text_size_menu_material"
-            android:textColor="@color/text_view_text"/>
+            android:textColor="@color/text_view_text"
+            android:singleLine="true"/>
 
     <TextView
             android:id="@+id/subject"
             android:layout_width="match_parent"
             android:layout_height="24dp"
             android:textSize="@dimen/abc_text_size_title_material"
-            android:textColor="@color/text_view_text"/>
+            android:textColor="@color/text_view_text"
+            android:singleLine="true"/>
 
 </LinearLayout>
