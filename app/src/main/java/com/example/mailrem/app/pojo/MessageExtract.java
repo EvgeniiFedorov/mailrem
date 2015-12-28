@@ -147,21 +147,17 @@ public final class MessageExtract {
 
             if (message.isMimeType("multipart/*")) {
                 Multipart multipart = (Multipart) message.getContent();
-                String text = "";
 
                 for (int partNumber = 0; partNumber < multipart.getCount(); ++partNumber) {
                     BodyPart bodyPart = multipart.getBodyPart(partNumber);
 
                     if (bodyPart.isMimeType("text/*")) {
-                        text += (String) bodyPart.getContent();
+                        return (String) bodyPart.getContent();
                     }
                 }
 
-                if (!text.equals("")) {
-                    return text;
-                } else {
-                    return TEXT_NOT_FOUND;
-                }
+                return TEXT_NOT_FOUND;
+
             }
             return TEXT_NOT_FOUND;
         } catch (MessagingException e) {
